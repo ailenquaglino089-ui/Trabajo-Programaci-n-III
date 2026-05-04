@@ -1,0 +1,72 @@
+<?php
+require_once __DIR__ . '/db.php';;
+
+// Cargar pacientes para el autocompletado
+$stmt = $pdo->query("SELECT * FROM pacientes WHERE activo = 1 ORDER BY nombre ASC");
+$pacientes_db = $stmt->fetchAll();
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $dni = $_POST['dni'];
+    $nombre = $_POST['nombre'];
+    $obra = $_POST['id_obra_social'];
+
+    $sql = "INSERT INTO pacientes (dni, nombre, id_obra_social, activo) 
+            VALUES (?, ?, ?, 1) 
+            ON DUPLICATE KEY UPDATE nombre = ?, id_obra_social = ?";
+    $pdo->prepare($sql)->execute([$dni, $nombre, $obra, $nombre, $obra]);
+    header("Location: lista");
+}
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - SaludWEB</title>
+    <style>
+        body { font-family: sans-serif; background: #f0f2f5; display: flex; justify-content: center; padding-top: 50px; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); width: 400px; }
+        .selector-box { background: #e7f3ff; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #bde0fe; }
+        input, select { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2 align="center">👤 Nuevo Registro</h2>
+    
+    <div class="selector-box">
+        <label>Buscar Paciente Existente:</label>
+        <select onchange="autoLlenar(this)">
+            <option value="">-- Seleccionar --</option>
+            <?php foreach ($pacientes_db as $p): ?>
+                <option value="<?php echo $p['id']; ?>" data-dni="<?php echo $p['dni']; ?>" data-nom="<?php echo $p['nombre']; ?>" data-obra="<?php echo $p['id_obra_social']; ?>">
+                    <?php echo $p['nombre']; ?> (<?php echo $p['dni']; ?>)
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+
+    <form method="POST">
+        <input type="text" name="dni" id="dn" placeholder="DNI" required>
+        <input type="text" name="nombre" id="nom" placeholder="Nombre Completo" required>
+        <select name="id_obra_social" id="obr">
+            <option value="1">Particular</option>
+            <option value="2">OSDE</option>
+            <option value="3">PAMI</option>
+        </select>
+        <button type="submit">Guardar Paciente</button>
+    </form>
+</div>
+
+<script>
+function autoLlenar(sel) {
+    const opt = sel.options[sel.selectedIndex];
+    if(opt.value !== "") {
+        document.getElementById('dn').value = opt.getAttribute('data-dni');
+        document.getElementById('nom').value = opt.getAttribute('data-nom');
+        document.getElementById('obr').value = opt.getAttribute('data-obra');
+    }
+}
+</script>
+</body>
+</html>

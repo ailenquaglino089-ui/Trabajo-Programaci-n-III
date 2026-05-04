@@ -1,0 +1,16 @@
+RewriteEngine On
+RewriteBase /prog3-clase2/
+
+# Permitir acceso sólo desde localhost.
+RewriteCond %{REMOTE_ADDR} !^127\.0\.0\.1$
+RewriteCond %{REMOTE_ADDR} !^::1$
+RewriteRule .* - [F]
+
+# Evitar indexación si el sitio queda accesible accidentalmente.
+<IfModule mod_headers.c>
+    Header set X-Robots-Tag "noindex, nofollow, noarchive"
+</IfModule>
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/index.php [QSA,L]
