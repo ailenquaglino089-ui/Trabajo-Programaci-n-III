@@ -1,4 +1,8 @@
 <?php
+/**
+ * Sistema de Ruteo Centralizado.
+ * Mapea las URLs amigables a los archivos físicos en la carpeta SaludWEB.
+ */
 function cargarArchivo($nombreArchivo) {
     global $pdo;
     $ruta = dirname(__DIR__) . '/SaludWEB/' . $nombreArchivo;
@@ -10,8 +14,10 @@ function cargarArchivo($nombreArchivo) {
 }
 
 function router() {
+    global $pdo;
+    // Limpieza de la URI para procesar la ruta solicitada
     $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    $base = '/prog3-clase2';
+    $base = '/prog3-clase2'; // Subdirectorio del proyecto
 
     if (strpos($uri, $base) === 0) {
         $uri = substr($uri, strlen($base));
@@ -19,6 +25,7 @@ function router() {
 
     $ruta = trim($uri, '/');
 
+    // Delegación a la API si la ruta comienza con 'api'
     if ($ruta === 'api' || strpos($ruta, 'api/') === 0) {
         include __DIR__ . '/api.php';
         exit;
@@ -29,6 +36,7 @@ function router() {
         exit;
     }
 
+    // Mapeo de rutas amigables a archivos específicos
     if ($ruta === 'lista') {
         cargarArchivo('lista_pacientes.php');
         exit;
@@ -36,11 +44,6 @@ function router() {
 
     if ($ruta === 'papelera') {
         cargarArchivo('papelera.php');
-        exit;
-    }
-
-    if ($ruta === 'restaurar') {
-        cargarArchivo('restaurar_paciente.php');
         exit;
     }
 
@@ -64,11 +67,6 @@ function router() {
         exit;
     }
 
-    if ($ruta === 'eliminar') {
-        cargarArchivo('eliminar_paciente.php');
-        exit;
-    }
-
     if ($ruta === 'auditoria') {
         cargarArchivo('auditoria.php');
         exit;
@@ -76,11 +74,6 @@ function router() {
 
     if ($ruta === 'guardar_triage') {
         cargarArchivo('guardar_triage.php');
-        exit;
-    }
-
-    if ($ruta === 'chat') {
-        cargarArchivo('chat.php');
         exit;
     }
 
@@ -99,6 +92,7 @@ function router() {
         exit;
     }
 
+    // Fallback para rutas de escritorio o dashboard principal
     if ($ruta === 'desktop' || $ruta === 'escritorio') {
         cargarArchivo('escritorio.php');
         exit;

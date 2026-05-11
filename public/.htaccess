@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # No redirigir si el archivo o directorio solicitado existe físicamente
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Redirigir todo lo demás al controlador frontal (index.php)
+    RewriteRule ^ index.php [L,QSA]
+</IfModule>

@@ -1,25 +1,38 @@
 <?php
 // public/api.php
+
+// Configuración de cabeceras para una API REST JSON y reporte de errores para desarrollo
 header('Content-Type: application/json; charset=utf-8');
-ini_set('display_errors', 1);
+// Desactivamos la visualización de errores HTML para no romper el JSON
+ini_set('display_errors', 0);
+ini_set('html_errors', 0);
 error_reporting(E_ALL);
 
+// Asegurar la conexión a la base de datos utilizando el objeto $pdo global
 global $pdo;
 if (!isset($pdo)) {
     require_once dirname(__DIR__) . '/SaludWeb/db.php';
-    global $pdo;
 }
 
+/**
+ * Envía una respuesta JSON estandarizada y finaliza la ejecución.
+ */
 function apiResponse($data, int $status = 200): void {
     http_response_code($status);
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     exit;
 }
 
+/**
+ * Envía un mensaje de error en formato JSON.
+ */
 function apiError(string $message, int $status = 400): void {
     apiResponse(['error' => $message, 'status' => $status], $status);
 }
 
+/**
+ * Construye la URL base del proyecto para la documentación de la API.
+ */
 function getBaseUrl(): string {
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
@@ -27,6 +40,9 @@ function getBaseUrl(): string {
     return rtrim($scheme . '://' . $host . $projectPath, '/');
 }
 
+/**
+ * Define la especificación OpenAPI (Swagger) para la documentación de la API.
+ */
 function getApiDocs(): array {
     $serverUrl = getBaseUrl();
     return [
@@ -79,6 +95,22 @@ function getApiDocs(): array {
                     'summary' => 'Eliminar paciente',
                     'description' => 'Realiza un soft delete marcando al paciente como inactivo.',
                     'responses' => ['200' => ['description' => 'Paciente eliminado', 'content' => ['application/json' => ['schema' => ['$ref' => '#/components/schemas/MessageResponse']]]], '404' => ['description' => 'Paciente no encontrado']]
+                ]
+            ],
+            '/api/pacientes/{id}/restore' => [
+                'patch' => [
+                    'summary' => 'Restaurar paciente',
+                    'description' => 'Restaurar un paciente marcado como inactivo.',
+                    'parameters' => [['name' => 'id', 'in' => 'path', 'required' => true, 'schema' => ['type' => 'integer']]],
+                    'responses' => ['200' => ['description' => 'Paciente restaurado', 'content' => ['application/json' => ['schema' => ['$ref' => '#/components/schemas/MessageResponse']]]], '404' => ['description' => 'Paciente no encontrado']]
+                ]
+            ],
+            '/api/triage' => [
+                'post' => [
+                    'summary' => 'Registrar Triage',
+                    'description' => 'Registra un nuevo triage para un paciente existente o crea uno nuevo si no existe.',
+                    'requestBody' => ['required' => true, 'content' => ['application/json' => ['schema' => ['$ref' => '#/components/schemas/TriageInput']]]],
+                    'responses' => ['201' => ['description' => 'Triage registrado', 'content' => ['application/json' => ['schema' => ['$ref' => '#/components/schemas/CreateResponse']]]]]
                 ]
             ],
             '/api/chat' => [
@@ -187,10 +219,16 @@ function getApiDocs(): array {
     ];
 }
 
+/**
+ * Endpoint para mostrar la documentación técnica.
+ */
 function apiDocs(): void {
     apiResponse(getApiDocs());
 }
 
+/**
+ * Captura el input JSON del cuerpo de la petición (request body).
+ */
 function getJsonInput(): array {
     $input = file_get_contents('php://input');
     if (!$input) {
@@ -206,6 +244,9 @@ function getJsonInput(): array {
     return $parsed;
 }
 
+/**
+ * Intenta obtener la API KEY de OpenAI desde diversas fuentes de configuración.
+ */
 function getOpenAIKey(): ?string {
     $key = getenv('OPENAI_API_KEY');
     if (!$key) {
@@ -226,6 +267,9 @@ function getOpenAIKey(): ?string {
     return null;
 }
 
+/**
+ * Realiza una petición a la API de OpenAI para el chat asistente.
+ */
 function callOpenAI(string $message): string {
     $apiKey = getOpenAIKey();
     if (!$apiKey || !function_exists('curl_init')) {
@@ -267,6 +311,9 @@ function callOpenAI(string $message): string {
     return trim($decoded['choices'][0]['message']['content']);
 }
 
+/**
+ * Sistema de respuestas local basado en palabras clave (Fallback si no hay OpenAI).
+ */
 function localChatAnswer(string $message, string $error = ''): string {
     $lower = mb_strtolower($message, 'UTF-8');
 
@@ -277,7 +324,7 @@ function localChatAnswer(string $message, string $error = ''): string {
     }
 
     if (stripos($lower, 'ruta') !== false || stripos($lower, 'endpoint') !== false || stripos($lower, 'api') !== false) {
-        return $intro . "Rutas disponibles:\n- GET /prog3-clase2/api/pacientes\n- GET /prog3-clase2/api/pacientes/{id}\n- POST /prog3-clase2/api/pacientes\n- PUT /prog3-clase2/api/pacientes/{id}\n- DELETE /prog3-clase2/api/pacientes/{id}\n- GET /prog3-clase2/api/prescripciones\n- GET /prog3-clase2/api/prescripciones/{id}\n- POST /prog3-clase2/api/prescripciones\n- PUT /prog3-clase2/api/prescripciones/{id}\n- GET /prog3-clase2/api/medicos\n- POST /prog3-clase2/api/medicos\n- POST /prog3-clase2/api/chat";
+        return $intro . "Rutas disponibles:\n- GET /prog3-clase2/api/pacientes\n- GET /prog3-clase2/api/pacientes/{id}\n- POST /prog3-clase2/api/pacientes\n- PUT /prog3-clase2/api/pacientes/{id}\n- PATCH /prog3-clase2/api/pacientes/{id}/restore\n- DELETE /prog3-clase2/api/pacientes/{id}\n- POST /prog3-clase2/api/triage\n- GET /prog3-clase2/api/prescripciones\n- GET /prog3-clase2/api/prescripciones/{id}\n- POST /prog3-clase2/api/prescripciones\n- PUT /prog3-clase2/api/prescripciones/{id}\n- GET /prog3-clase2/api/medicos\n- POST /prog3-clase2/api/medicos\n- POST /prog3-clase2/api/chat\n- GET /prog3-clase2/api/docs";
     }
 
     if (stripos($lower, 'paciente') !== false || stripos($lower, 'dni') !== false || stripos($lower, 'nombre') !== false) {
@@ -291,6 +338,9 @@ function localChatAnswer(string $message, string $error = ''): string {
     return $intro . "Estoy listo para ayudarte con el proyecto. Puedes preguntar sobre las rutas API, cómo crear o actualizar pacientes, o cómo usar esta aplicación. Si deseas respuestas avanzadas, configura OPENAI_API_KEY en el servidor.";
 }
 
+/**
+ * Controlador para la funcionalidad de chat de asistencia.
+ */
 function chatAssistant(PDO $pdo): void {
     $data = getJsonInput();
     $message = trim($data['message'] ?? $data['question'] ?? '');
@@ -302,6 +352,9 @@ function chatAssistant(PDO $pdo): void {
     apiResponse(['data' => ['answer' => $answer]]);
 }
 
+/**
+ * Obtiene el filtro de estado (activo/inactivo) de los parámetros GET.
+ */
 function getActiveFilter(): int {
     if (isset($_GET['activo']) && $_GET['activo'] === '0') {
         return 0;
@@ -309,6 +362,9 @@ function getActiveFilter(): int {
     return 1;
 }
 
+/**
+ * Lista pacientes incluyendo su última clasificación de triage y obra social.
+ */
 function listPacientes(PDO $pdo): void {
     $activo = getActiveFilter();
 
@@ -328,6 +384,9 @@ function listPacientes(PDO $pdo): void {
     apiResponse(['data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
 }
 
+/**
+ * Obtiene el detalle de un paciente y su historial de triages.
+ */
 function getPaciente(PDO $pdo, int $id): void {
     $stmt = $pdo->prepare(
         "SELECT p.*, o.nombre_obra
@@ -354,6 +413,9 @@ function getPaciente(PDO $pdo, int $id): void {
     apiResponse(['data' => $paciente]);
 }
 
+/**
+ * Registra un nuevo paciente.
+ */
 function createPaciente(PDO $pdo): void {
     $data = getJsonInput();
     $dni = trim($data['dni'] ?? '');
@@ -370,6 +432,9 @@ function createPaciente(PDO $pdo): void {
     apiResponse(['message' => 'Paciente creado', 'id' => (int)$pdo->lastInsertId()], 201);
 }
 
+/**
+ * Actualiza los datos de un paciente existente.
+ */
 function updatePaciente(PDO $pdo, int $id): void {
     $data = getJsonInput();
     $dni = trim($data['dni'] ?? '');
@@ -390,6 +455,9 @@ function updatePaciente(PDO $pdo, int $id): void {
     apiResponse(['message' => 'Paciente actualizado']);
 }
 
+/**
+ * Realiza una eliminación lógica (soft delete) de un paciente.
+ */
 function deletePaciente(PDO $pdo, int $id): void {
     $stmt = $pdo->prepare('UPDATE pacientes SET activo = 0 WHERE id = ?');
     $stmt->execute([$id]);
@@ -401,6 +469,58 @@ function deletePaciente(PDO $pdo, int $id): void {
     apiResponse(['message' => 'Paciente eliminado (soft delete)']);
 }
 
+/**
+ * Restaura un paciente que ha sido marcado como inactivo (borrado lógico).
+ */
+function restorePaciente(PDO $pdo, int $id): void {
+    $stmt = $pdo->prepare('UPDATE pacientes SET activo = 1 WHERE id = ?');
+    $stmt->execute([$id]);
+
+    if ($stmt->rowCount() === 0) {
+        apiError('Paciente no encontrado o ya activo', 404);
+    }
+
+    apiResponse(['message' => 'Paciente restaurado con éxito']);
+}
+
+/**
+ * Registra un nuevo triage para un paciente.
+ */
+function createTriage(PDO $pdo): void {
+    $data = getJsonInput();
+    $nombrePaciente = trim($data['nombre_paciente'] ?? '');
+    $nivelGravedad = $data['nivel_gravedad'] ?? null;
+    $observaciones = trim($data['observaciones'] ?? '');
+
+    if ($nombrePaciente === '' || $nivelGravedad === null) {
+        apiError('nombre_paciente y nivel_gravedad son obligatorios', 422);
+    }
+
+    // Buscar paciente por nombre o crearlo si no existe
+    $stmt = $pdo->prepare("SELECT id FROM pacientes WHERE nombre = ? AND activo = 1");
+    $stmt->execute([$nombrePaciente]);
+    $paciente = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $idPaciente = null;
+    if ($paciente) {
+        $idPaciente = $paciente['id'];
+    } else {
+        // Si no existe, crearlo (con DNI vacío por ahora, se podría pedir en el frontend)
+        $stmt = $pdo->prepare("INSERT INTO pacientes (nombre, dni, activo) VALUES (?, ?, 1)");
+        $stmt->execute([$nombrePaciente, 'PENDIENTE-' . uniqid()]); // Placeholder DNI
+        $idPaciente = $pdo->lastInsertId();
+    }
+
+    $sql = "INSERT INTO triages (id_paciente, nivel_gravedad, observaciones, fecha) VALUES (?, ?, ?, NOW())";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$idPaciente, $nivelGravedad, $observaciones]);
+
+    apiResponse(['message' => 'Triage registrado correctamente', 'id_triage' => (int)$pdo->lastInsertId(), 'id_paciente' => (int)$idPaciente], 201);
+}
+
+/**
+ * Lista las prescripciones médicas según su estado.
+ */
 function listPrescripciones(PDO $pdo): void {
     $estado = $_GET['estado'] ?? 'activa';
 
@@ -416,6 +536,9 @@ function listPrescripciones(PDO $pdo): void {
     apiResponse(['data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
 }
 
+/**
+ * Obtiene el detalle de una prescripción específica.
+ */
 function getPrescripcion(PDO $pdo, int $id): void {
     $stmt = $pdo->prepare(
         "SELECT p.*, pac.nombre AS paciente_nombre, m.nombre AS medico_nombre
@@ -434,6 +557,9 @@ function getPrescripcion(PDO $pdo, int $id): void {
     apiResponse(['data' => $prescripcion]);
 }
 
+/**
+ * Crea una nueva prescripción electrónica validando existencia de médico y paciente.
+ */
 function createPrescripcion(PDO $pdo): void {
     $data = getJsonInput();
     $idPaciente = $data['id_paciente'] ?? null;
@@ -469,6 +595,9 @@ function createPrescripcion(PDO $pdo): void {
     apiResponse(['message' => 'Prescripción creada', 'id' => (int)$pdo->lastInsertId()], 201);
 }
 
+/**
+ * Actualiza el estado de una prescripción (ej: a 'dispensada').
+ */
 function updatePrescripcion(PDO $pdo, int $id): void {
     $data = getJsonInput();
     $estado = $data['estado'] ?? null;
@@ -487,12 +616,32 @@ function updatePrescripcion(PDO $pdo, int $id): void {
     apiResponse(['message' => 'Prescripción actualizada']);
 }
 
+/**
+ * Elimina físicamente una prescripción de la base de datos.
+ */
+function deletePrescripcion(PDO $pdo, int $id): void {
+    $stmt = $pdo->prepare('DELETE FROM prescripciones WHERE id = ?');
+    $stmt->execute([$id]);
+
+    if ($stmt->rowCount() === 0) {
+        apiError('Prescripción no encontrada', 404);
+    }
+
+    apiResponse(['message' => 'Prescripción eliminada correctamente']);
+}
+
+/**
+ * Lista los médicos activos registrados.
+ */
 function listMedicos(PDO $pdo): void {
     $stmt = $pdo->prepare('SELECT * FROM medicos WHERE activo = 1 ORDER BY nombre ASC');
     $stmt->execute();
     apiResponse(['data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
 }
 
+/**
+ * Registra un nuevo médico en el sistema.
+ */
 function createMedico(PDO $pdo): void {
     $data = getJsonInput();
     $nombre = trim($data['nombre'] ?? '');
@@ -509,9 +658,11 @@ function createMedico(PDO $pdo): void {
     apiResponse(['message' => 'Médico creado', 'id' => (int)$pdo->lastInsertId()], 201);
 }
 
+// --- Sistema de Ruteo Manual de la API ---
 $rutaApi = isset($ruta) ? $ruta : trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 $segments = explode('/', trim($rutaApi, '/'));
 
+// Validación básica de ruta
 if (count($segments) < 2 || $segments[0] !== 'api') {
     apiError('Ruta API inválida', 404);
 }
@@ -520,6 +671,7 @@ $resource = $segments[1] ?? null;
 $id = isset($segments[2]) ? (int)$segments[2] : null;
 $method = $_SERVER['REQUEST_METHOD'];
 
+// Routing para Pacientes
 if ($resource === 'pacientes') {
     switch ($method) {
         case 'GET':
@@ -536,7 +688,11 @@ if ($resource === 'pacientes') {
             if ($id === null || $id <= 0) {
                 apiError('ID de paciente requerido', 400);
             }
+            if ($action === 'restore') {
+                restorePaciente($pdo, $id);
+            } else {
             updatePaciente($pdo, $id);
+            }
             break;
         case 'DELETE':
             if ($id === null || $id <= 0) {
@@ -547,8 +703,20 @@ if ($resource === 'pacientes') {
         default:
             apiError('Método no permitido', 405);
     }
-}Q
+}
 
+// Routing para Triage
+if ($resource === 'triage') {
+    switch ($method) {
+        case 'POST':
+            createTriage($pdo);
+            break;
+        default:
+            apiError('Método no permitido', 405);
+    }
+}
+
+// Routing para Prescripciones
 if ($resource === 'prescripciones') {
     switch ($method) {
         case 'GET':
@@ -567,11 +735,18 @@ if ($resource === 'prescripciones') {
             }
             updatePrescripcion($pdo, $id);
             break;
+        case 'DELETE':
+            if ($id === null || $id <= 0) {
+                apiError('ID de prescripción requerido', 400);
+            }
+            deletePrescripcion($pdo, $id);
+            break;
         default:
             apiError('Método no permitido', 405);
     }
 }
 
+// Routing para Médicos
 if ($resource === 'medicos') {
     switch ($method) {
         case 'GET':
@@ -585,6 +760,7 @@ if ($resource === 'medicos') {
     }
 }
 
+// Routing para Chat
 if ($resource === 'chat') {
     if ($method === 'OPTIONS') {
         apiResponse(['status' => 'ok']);
@@ -595,6 +771,7 @@ if ($resource === 'chat') {
     chatAssistant($pdo);
 }
 
+// Routing para Documentación
 if ($resource === 'docs' || $resource === 'openapi.json') {
     if ($method !== 'GET') {
         apiError('Método no permitido', 405);

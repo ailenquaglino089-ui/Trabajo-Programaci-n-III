@@ -1,5 +1,7 @@
 <?php
 // public/index.php
+
+// Habilitación de errores para depuración durante el desarrollo
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 

@@ -1,7 +1,9 @@
 <?php
+/**
+ * Módulo de Papelera: Recupera pacientes que han sido marcados como inactivos (borrado lógico).
+ */
 require_once __DIR__ . '/db.php';;
 
-// Traemos solo los eliminados (activo = 0)
 $sql = "SELECT * FROM pacientes WHERE activo = 0 ORDER BY nombre ASC";
 $stmt = $pdo->query($sql);
 $eliminados = $stmt->fetchAll(PDO::FETCH_ASSOC);

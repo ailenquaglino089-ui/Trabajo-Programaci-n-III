@@ -1,15 +1,18 @@
 <?php
 // SaludWEB/db.php
+
+// Parámetros de conexión a la base de datos MySQL
 $host = 'localhost';
 $db   = 'pacientes'; // Nombre que aparece en tu captura 446
 $user = 'root';
 $pass = '';
 
 try {
+    // Establecer conexión usando PDO con soporte para caracteres UTF-8
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Aseguramos que la tabla de medicamentos exista para MRx Digital.
+    // Migración automática: Aseguramos que la tabla de medicamentos exista
     $pdo->exec("CREATE TABLE IF NOT EXISTS medicamentos (
         id INT AUTO_INCREMENT PRIMARY KEY,
         nombre VARCHAR(255) NOT NULL,
@@ -17,6 +20,7 @@ try {
         creado_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
+    // Si la tabla de medicamentos está vacía, insertamos valores por defecto para pruebas
     $countStmt = $pdo->query('SELECT COUNT(*) FROM medicamentos');
     $medicamentosCount = (int) $countStmt->fetchColumn();
     if ($medicamentosCount === 0) {
@@ -27,7 +31,7 @@ try {
         }
     }
 
-    // Aseguramos que la tabla de médicos exista para MRx Digital.
+    // Migración automática: Aseguramos que la tabla de médicos exista
     $pdo->exec("CREATE TABLE IF NOT EXISTS medicos (
         id INT AUTO_INCREMENT PRIMARY KEY,
         nombre VARCHAR(255) NOT NULL,
@@ -37,6 +41,7 @@ try {
         creado_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
+    // Poblado inicial de médicos si la tabla está recién creada
     $countMedicosStmt = $pdo->query('SELECT COUNT(*) FROM medicos');
     $medicosCount = (int) $countMedicosStmt->fetchColumn();
     if ($medicosCount === 0) {
@@ -52,6 +57,7 @@ try {
         }
     }
 } catch (PDOException $e) {
-    die("Error de conexión: " . $e->getMessage());
+    // En lugar de die(), lanzamos la excepción para que el llamador decida cómo mostrarla
+    throw $e;
 }
 ?>

@@ -1,8 +1,11 @@
 <?php
 // SaludWeb/emitir_prescripcion.php
+
+// Proceso de emisión de recetas digitales
 require_once 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Extracción de datos del formulario
     $idPaciente = $_POST['id_paciente'] ?? '';
     $idMedico = $_POST['id_medico'] ?? '';
     $medicamentos = $_POST['medicamentos'] ?? [];
@@ -13,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($idPaciente) || empty($idMedico) || empty($medicamentos) || count($medicamentos) === 0) {
         $error = 'Todos los campos son obligatorios.';
     } else {
+        // Estructuración de medicamentos para guardarlos como JSON en la base de datos
         $prescripcionMedicamentos = [];
         foreach ($medicamentos as $index => $medId) {
             if (empty($medId)) {
@@ -27,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($prescripcionMedicamentos)) {
             $error = 'Debe seleccionar al menos un medicamento válido.';
         } else {
+            // Simulación de Firma Digital y QR según normativas vigentes
             $medicamentosJson = json_encode($prescripcionMedicamentos, JSON_UNESCAPED_UNICODE);
             $qrCode = 'QR-' . uniqid();
             $firmaDigital = 'FIRMA-' . $idMedico . '-' . time();
@@ -38,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Obtener listas para selects
+// Obtención de catálogos para los selects del formulario
 try {
     $pacientesStmt = $pdo->query('SELECT id, nombre FROM pacientes WHERE activo = 1');
     $pacientes = $pacientesStmt->fetchAll(PDO::FETCH_ASSOC);

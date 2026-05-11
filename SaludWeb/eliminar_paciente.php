@@ -1,17 +1,17 @@
 <?php
-// 1. Iniciamos sesión para que el mensaje viaje a la otra página
+// SaludWEB/eliminar_paciente.php
+
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
-// 2. Conexión a la base de datos 'pacientes'
 try {
     $pdo = new PDO("mysql:host=localhost;dbname=pacientes;charset=utf8", "root", "");
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // 3. Obtenemos el ID desde la URL
     $id = $_GET['id'] ?? null;
 
     if ($id) {
-        // 4. Ejecutamos el borrado lógico (pasamos activo a 0)
+        // Implementación de Borrado Lógico (Soft Delete):
+        // No eliminamos la fila (DELETE), sino que la marcamos como inactiva.
         $stmt = $pdo->prepare("UPDATE pacientes SET activo = 0 WHERE id = ?");
         
         if ($stmt->execute([$id])) {
