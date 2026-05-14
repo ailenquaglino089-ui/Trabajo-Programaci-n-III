@@ -56,6 +56,22 @@ try {
             $insertMedicoStmt->execute($medico);
         }
     }
+
+    // Migración automática: Aseguramos que la tabla de prescripciones exista
+    $pdo->exec("CREATE TABLE IF NOT EXISTS prescripciones (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        id_paciente INT NOT NULL,
+        id_medico INT NOT NULL,
+        medicamentos JSON NOT NULL,
+        indicaciones TEXT NULL,
+        fecha_emision TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        fecha_vencimiento DATE NULL,
+        estado VARCHAR(50) DEFAULT 'activa',
+        qr_code VARCHAR(255) NULL,
+        firma_digital VARCHAR(255) NULL,
+        FOREIGN KEY (id_paciente) REFERENCES pacientes(id),
+        FOREIGN KEY (id_medico) REFERENCES medicos(id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 } catch (PDOException $e) {
     // En lugar de die(), lanzamos la excepción para que el llamador decida cómo mostrarla
     throw $e;

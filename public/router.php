@@ -5,7 +5,7 @@
  */
 function cargarArchivo($nombreArchivo) {
     global $pdo;
-    $ruta = dirname(__DIR__) . '/SaludWEB/' . $nombreArchivo;
+    $ruta = dirname(__DIR__) . '/SaludWeb/' . $nombreArchivo;
     if (file_exists($ruta)) {
         include $ruta;
     } else {
@@ -84,6 +84,23 @@ function router() {
 
     if ($ruta === 'lista_prescripciones') {
         cargarArchivo('lista_prescripciones.php');
+        exit;
+    }
+
+    if ($ruta === 'farmacia') {
+        // Cargamos la interfaz de farmacia desde SaludWEB
+        cargarArchivo('farmacia.php'); 
+        exit;
+    }
+
+    if ($ruta === 'procesar_dispensa') {
+        // Cargamos el procesador de entrega desde SaludWEB
+        cargarArchivo('procesar_dispensa.php');
+        exit;
+    }
+
+    if ($ruta === 'medicos') {
+        cargarArchivo('lista_medicos.php');
         exit;
     }
 

@@ -3,12 +3,16 @@
 require_once 'db.php';
 
 $estado = $_GET['estado'] ?? 'activa';
+$paciente_id = $_GET['paciente_id'] ?? null;
+
 $sql = "SELECT p.*, pac.nombre AS paciente_nombre, m.nombre AS medico_nombre
         FROM prescripciones p
         LEFT JOIN pacientes pac ON p.id_paciente = pac.id
         LEFT JOIN medicos m ON p.id_medico = m.id
-        WHERE p.estado = ?
-        ORDER BY p.fecha_emision DESC";
+        WHERE p.estado = ?";
+
+if ($paciente_id) { $sql .= " AND p.id_paciente = " . (int)$paciente_id; }
+$sql .= " ORDER BY p.fecha_emision DESC";
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$estado]);

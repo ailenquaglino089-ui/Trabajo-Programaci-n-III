@@ -164,6 +164,11 @@ function getApiDocs(): array {
                     'responses' => ['201' => ['description' => 'Médico creado', 'content' => ['application/json' => ['schema' => ['$ref' => '#/components/schemas/CreateResponse']]]]]
                 ]
             ],
+            '/api/medicos/{id}' => [
+                'parameters' => [['name' => 'id', 'in' => 'path', 'required' => true, 'schema' => ['type' => 'integer']]],
+                'put' => ['summary' => 'Actualizar médico', 'responses' => ['200' => ['description' => 'Médico actualizado']]],
+                'patch' => ['summary' => 'Actualizar médico (parcial)', 'responses' => ['200' => ['description' => 'Médico actualizado']]]
+            ],
             '/api/docs' => [
                 'get' => [
                     'summary' => 'Documentación automática',
@@ -309,6 +314,32 @@ function callOpenAI(string $message): string {
     }
 
     return trim($decoded['choices'][0]['message']['content']);
+}
+
+/**
+ * Actualiza los datos de un médico existente.
+ */
+function updateMedico(PDO $pdo, int $id): void {
+    $data = getJsonInput();
+    $nombre = trim($data['nombre'] ?? '');
+    $matricula = trim($data['matricula'] ?? '');
+    $especialidad = trim($data['especialidad'] ?? '');
+    $activo = isset($data['activo']) ? (int)$data['activo'] : null;
+
+    $fields = []; $params = [];
+    if ($nombre !== '') { $fields[] = "nombre = ?"; $params[] = $nombre; }
+    if ($matricula !== '') { $fields[] = "matricula = ?"; $params[] = $matricula; }
+    if ($especialidad !== '') { $fields[] = "especialidad = ?"; $params[] = $especialidad; }
+    if ($activo !== null) { $fields[] = "activo = ?"; $params[] = $activo; }
+
+    if (empty($fields)) apiError('No hay campos para actualizar', 400);
+
+    $params[] = $id;
+    $stmt = $pdo->prepare("UPDATE medicos SET " . implode(", ", $fields) . " WHERE id = ?");
+    $stmt->execute($params);
+
+    if ($stmt->rowCount() === 0) apiError('Médico no encontrado o sin cambios', 404);
+    apiResponse(['message' => 'Médico actualizado']);
 }
 
 /**
@@ -669,6 +700,7 @@ if (count($segments) < 2 || $segments[0] !== 'api') {
 
 $resource = $segments[1] ?? null;
 $id = isset($segments[2]) ? (int)$segments[2] : null;
+$action = $segments[3] ?? null;
 $method = $_SERVER['REQUEST_METHOD'];
 
 // Routing para Pacientes
@@ -754,6 +786,11 @@ if ($resource === 'medicos') {
             break;
         case 'POST':
             createMedico($pdo);
+            break;
+        case 'PUT':
+        case 'PATCH':
+            if ($id === null || $id <= 0) apiError('ID de médico requerido', 400);
+            updateMedico($pdo, $id);
             break;
         default:
             apiError('Método no permitido', 405);

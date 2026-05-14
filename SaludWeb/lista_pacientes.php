@@ -14,8 +14,9 @@ require_once __DIR__ . '/db.php';
 try {
     $busqueda = isset($_GET['buscar']) ? $_GET['buscar'] : '';
     
-    // Consulta compleja: Une pacientes con sus obras sociales y obtiene solo el ÚLTIMO triage realizado
-    $sql = "SELECT p.*, o.nombre_obra, t.nivel_gravedad 
+    // Consulta unificada: Pacientes + Último Triage + Conteo de Recetas Activas
+    $sql = "SELECT p.*, o.nombre_obra, t.nivel_gravedad, 
+            (SELECT COUNT(*) FROM prescripciones WHERE id_paciente = p.id AND estado = 'activa') as recetas_activas
             FROM pacientes p 
             LEFT JOIN obras_sociales o ON p.id_obra_social = o.id 
             LEFT JOIN (
@@ -37,6 +38,12 @@ try {
 $total = count($pacientes);
 $criticos = 0; $suma_dolor = 0; $con_triage = 0; $pendientes = 0;
 $obras_stats = [];
+
+// --- MÉTRICAS DE CONEXIÓN CON OTROS MÓDULOS ---
+// Contamos el total de recetas que están esperando ser entregadas en Farmacia
+$total_recetas_farmacia = $pdo->query("SELECT COUNT(*) FROM prescripciones WHERE estado = 'activa'")->fetchColumn();
+// Contamos cuántos médicos están marcados específicamente como activos (1)
+$total_medicos = (int)$pdo->query("SELECT COUNT(*) FROM medicos WHERE activo = 1")->fetchColumn();
 
 foreach($pacientes as $pac) {
     $g = $pac['nivel_gravedad'];
@@ -98,7 +105,7 @@ $promedio_dolor = ($con_triage > 0) ? round($suma_dolor / $con_triage, 1) : 0;
         .search-bar { background: white; padding: 12px 20px; border-radius: 12px; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); display: flex; align-items: center; }
         .search-bar input { border: none; outline: none; width: 100%; font-size: 1rem; margin-left: 10px; color: var(--text); }
         
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
         .stat-card { background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 15px; }
         .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
         .stat-info h3 { font-size: 0.8rem; color: var(--gray); margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -174,6 +181,15 @@ $promedio_dolor = ($con_triage > 0) ? round($suma_dolor / $con_triage, 1) : 0;
             <span>Ver Recetas</span>
         </a>
 
+        <a href="farmacia" class="action-card" style="border-top: 3px solid #28a745;">
+            <i>🏪</i>
+            <span>Módulo Farmacia (Entrega)</span>
+        </a>
+        <a href="medicos" class="action-card" style="border-top: 3px solid #8b5cf6;">
+            <i>👨‍⚕️</i>
+            <span>Gestión de Médicos</span>
+        </a>
+
         <!-- Herramientas Inteligentes -->
         <a href="chat" class="action-card" style="border-top: 3px solid #10b981;">
             <i>💬</i>
@@ -216,6 +232,14 @@ $promedio_dolor = ($con_triage > 0) ? round($suma_dolor / $con_triage, 1) : 0;
             <div class="stat-icon" style="background:#e0f2fe; color:var(--primary);">🌡️</div>
             <div class="stat-info"><h3>Dolor Promedio</h3><p><?php echo $promedio_dolor; ?></p></div>
         </div>
+        <a href="farmacia" class="stat-card" style="text-decoration:none; color:inherit;">
+            <div class="stat-icon" style="background:#d1fae5; color:#10b981;">💊</div>
+            <div class="stat-info"><h3>Recetas en Farmacia</h3><p><?php echo $total_recetas_farmacia; ?></p></div>
+        </a>
+        <a href="medicos" class="stat-card" style="text-decoration:none; color:inherit;">
+            <div class="stat-icon" style="background:#ede9fe; color:#8b5cf6;">👨‍⚕️</div>
+            <div class="stat-info"><h3>Médicos Activos</h3><p><?php echo $total_medicos; ?></p></div>
+        </a>
     </div>
 
     <div class="main-layout">
@@ -231,6 +255,7 @@ $promedio_dolor = ($con_triage > 0) ? round($suma_dolor / $con_triage, 1) : 0;
                         <th>Estado</th>
                         <th>Paciente</th>
                         <th>DNI</th>
+                        <th>Recetas Activas</th>
                         <th>Obra Social</th>
                         <th>Acciones</th>
                     </tr>
@@ -245,9 +270,18 @@ $promedio_dolor = ($con_triage > 0) ? round($suma_dolor / $con_triage, 1) : 0;
                         <td><span class="badge-status <?php echo $clase; ?>"><?php echo $texto; ?></span></td>
                         <td><strong><?php echo htmlspecialchars($p['nombre']); ?></strong></td>
                         <td style="color:var(--gray);"><?php echo htmlspecialchars($p['dni']); ?></td>
+                        <td>
+                            <?php if ($p['recetas_activas'] > 0): ?>
+                                <span style="color:#10b981; font-weight:bold;">💊 <?php echo $p['recetas_activas']; ?> pendiente(s)</span>
+                            <?php else: ?>
+                                <span style="color:var(--gray); font-size:0.8rem;">Ninguna</span>
+                            <?php endif; ?>
+                        </td>
                         <td><span class="txt-obra"><?php echo htmlspecialchars($p['nombre_obra'] ?? 'Particular'); ?></span></td>
                         <td class="acciones">
                             <a href="ver_triage?id=<?php echo $p['id']; ?>" title="Historial">👁️</a>
+                            <a href="lista_prescripciones?paciente_id=<?php echo $p['id']; ?>" title="Ver sus Recetas" style="background:#e0f2fe;">📂</a>
+                            <a href="emitir_prescripcion?id_paciente=<?php echo $p['id']; ?>" title="Prescribir" style="background:#fff7ed;">💊</a>
                             <a href="triage?id=<?php echo $p['id']; ?>" title="Nuevo Triage" style="background:#d1fae5;">📋</a>
                             <a href="editar?id=<?php echo $p['id']; ?>" title="Editar">✏️</a>
                             <a href="eliminar?id=<?php echo $p['id']; ?>" onclick="return confirm('¿Enviar a la papelera?')" title="Eliminar" style="background:#fee2e2;">🗑️</a>
@@ -264,10 +298,12 @@ $promedio_dolor = ($con_triage > 0) ? round($suma_dolor / $con_triage, 1) : 0;
             <?php endif; ?>
         </div>
 
-        <div class="white-box">
-            <h3 style="margin-top:0;">📊 Coberturas</h3>
-            <div style="position:relative; height:250px;">
-                <canvas id="graficoObras"></canvas>
+        <div style="display: flex; flex-direction: column; gap: 25px;">
+            <div class="white-box">
+                <h3 style="margin-top:0;">📊 Coberturas</h3>
+                <div style="position:relative; height:180px;">
+                    <canvas id="graficoObras"></canvas>
+                </div>
             </div>
         </div>
     </div>

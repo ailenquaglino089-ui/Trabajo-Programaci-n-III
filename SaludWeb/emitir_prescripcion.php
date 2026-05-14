@@ -4,6 +4,9 @@
 // Proceso de emisión de recetas digitales
 require_once 'db.php';
 
+// Captura de ID de paciente desde el Dashboard
+$idPacienteSeleccionado = $_GET['id_paciente'] ?? '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Extracción de datos del formulario
     $idPaciente = $_POST['id_paciente'] ?? '';
@@ -117,7 +120,7 @@ try {
         <select name="id_paciente" id="id_paciente" required>
             <option value="">Seleccionar paciente</option>
             <?php foreach ($pacientes as $pac): ?>
-                <option value="<?php echo $pac['id']; ?>"><?php echo $pac['nombre']; ?></option>
+                <option value="<?php echo $pac['id']; ?>" <?php echo ($idPacienteSeleccionado == $pac['id']) ? 'selected' : ''; ?>><?php echo $pac['nombre']; ?></option>
             <?php endforeach; ?>
         </select>
 
