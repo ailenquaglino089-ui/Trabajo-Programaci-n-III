@@ -23,14 +23,14 @@
             <span class="info">Documentación generada automáticamente</span>
         </div>
         <div>
-            <a href="lista">Volver al dashboard</a>
+            <a href="lista_pacientes.php">Volver al dashboard</a>
         </div>
     </div>
     <div id="swagger-ui"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.27.0/swagger-ui-bundle.min.js" integrity="sha512-GXC3n6HSN1lPdp57PA5gGjDoW+6tJwB+ZmIu0zPGriFjR9Vy9U++3B3kNIdt4CL5Oo1uGgB5oD+KKYssmSZdWw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
-        const basePath = window.location.pathname.replace(/\/api-docs\/?$/, '');
+        const basePath = window.location.pathname.replace(/\/api_docs\.php$/, '');
         const apiDocUrl = window.location.origin + basePath + '/api/openapi.json';
 
         SwaggerUIBundle({

@@ -4,8 +4,7 @@
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
 try {
-    $pdo = new PDO("mysql:host=localhost;dbname=pacientes;charset=utf8", "root", "");
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    require_once __DIR__ . '/db.php';
 
     $id = $_GET['id'] ?? null;
 
@@ -20,16 +19,19 @@ try {
             $_SESSION['mensaje'] = "El paciente ha sido eliminado correctamente y enviado a la papelera.";
         } else {
             $_SESSION['mensaje'] = "Error: No se pudo eliminar el paciente.";
+            $_SESSION['tipo_mensaje'] = "danger";
         }
     } else {
         $_SESSION['mensaje'] = "Error: ID de paciente no válido.";
+        $_SESSION['tipo_mensaje'] = "danger";
     }
 
 } catch (PDOException $e) {
     $_SESSION['mensaje'] = "Error de base de datos: " . $e->getMessage();
+    $_SESSION['tipo_mensaje'] = "danger";
 }
 
 // 6. Volvemos automáticamente a la lista
-header("Location: lista");
+header("Location: lista_pacientes.php");
 exit();
 ?>

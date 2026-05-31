@@ -1,6 +1,6 @@
 <?php
 // 1. Incluimos la conexión que creaste recién
-require_once __DIR__ . '/db.php';; 
+require_once __DIR__ . '/db.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // 2. Capturamos los datos del formulario

@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/db.php';;
+require_once __DIR__ . '/db.php';
 
 $id = $_GET['id'] ?? null;
 if (!$id) { die("ID no recibido."); }
@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sql = "UPDATE pacientes SET nombre = ?, dni = ?, id_obra_social = ? WHERE id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$_POST['nombre'], $_POST['dni'], $_POST['id_obra_social'], $id]);
-    header("Location: lista?mensaje=Actualizado");
+    header("Location: lista_pacientes.php?mensaje=Actualizado");
     exit();
 }
 
@@ -44,7 +44,7 @@ if (!$p) { die("Paciente no encontrado en la base de datos."); }
                 <option value="3" <?= $p['id_obra_social']==3?'selected':'' ?>>PAMI</option>
             </select>
             <button type="submit" class="btn">Guardar Cambios</button>
-            <a href="lista" style="display:block; text-align:center; margin-top:15px; color:#666; text-decoration:none; font-size:0.8rem;">Volver</a>
+            <a href="lista_pacientes.php" style="display:block; text-align:center; margin-top:15px; color:#666; text-decoration:none; font-size:0.8rem;">Volver</a>
         </form>
     </div>
 </body>

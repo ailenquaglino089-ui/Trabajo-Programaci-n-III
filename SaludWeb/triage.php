@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/db.php';;
+require_once __DIR__ . '/db.php';
 
 // Si venís del dashboard, capturamos el ID para saber de quién hablamos
 $nombre_seleccionado = "";
@@ -28,7 +28,7 @@ $todos = $pdo->query("SELECT nombre FROM pacientes WHERE activo = 1 ORDER BY nom
 <body>
     <div class="card">
         <h2>📋 Cargar Triage</h2>
-        <form action="/prog3-clase2/guardar_triage" method="POST">
+        <form action="guardar_triage.php" method="POST">
             <label>Paciente:</label>
             <input list="nombres" name="nombre_paciente" value="<?= htmlspecialchars($nombre_seleccionado) ?>" placeholder="Escribí o seleccioná..." required>
             <datalist id="nombres">

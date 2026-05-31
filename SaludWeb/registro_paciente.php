@@ -1,20 +1,38 @@
 <?php
-require_once __DIR__ . '/db.php';;
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-// Cargar pacientes para el autocompletado
-$stmt = $pdo->query("SELECT * FROM pacientes WHERE activo = 1 ORDER BY nombre ASC");
-$pacientes_db = $stmt->fetchAll();
+$error = null;
+$success = null;
+$pacientes_db = [];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $dni = $_POST['dni'];
-    $nombre = $_POST['nombre'];
-    $obra = $_POST['id_obra_social'];
+try {
+    require_once __DIR__ . '/db.php';
 
-    $sql = "INSERT INTO pacientes (dni, nombre, id_obra_social, activo) 
-            VALUES (?, ?, ?, 1) 
-            ON DUPLICATE KEY UPDATE nombre = ?, id_obra_social = ?";
-    $pdo->prepare($sql)->execute([$dni, $nombre, $obra, $nombre, $obra]);
-    header("Location: lista");
+    // Cargar pacientes para el autocompletado
+    $stmt = $pdo->query("SELECT * FROM pacientes WHERE activo = 1 ORDER BY nombre ASC");
+    $pacientes_db = $stmt->fetchAll();
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $dni = trim($_POST['dni'] ?? '');
+        $nombre = trim($_POST['nombre'] ?? '');
+        $obra = $_POST['id_obra_social'] ?? 1;
+
+        if ($dni === '' || $nombre === '') {
+            $error = 'DNI y nombre son obligatorios.';
+        } else {
+            $sql = "INSERT INTO pacientes (dni, nombre, id_obra_social, activo) 
+                    VALUES (?, ?, ?, 1) 
+                    ON DUPLICATE KEY UPDATE nombre = ?, id_obra_social = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$dni, $nombre, $obra, $nombre, $obra]);
+            header("Location: lista_pacientes.php");
+            exit;
+        }
+    }
+} catch (Exception $e) {
+    $error = 'Error al acceder a la base de datos: ' . $e->getMessage();
 }
 ?>
 <!DOCTYPE html>
@@ -33,7 +51,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 <div class="card">
     <h2 align="center">👤 Nuevo Registro</h2>
-    
+    <?php if (!empty($error)): ?>
+        <div style="background:#fee2e2; color:#9b1c1c; padding:12px; border-radius:10px; margin-bottom:20px;">
+            <strong>Error:</strong> <?php echo htmlspecialchars($error); ?>
+        </div>
+    <?php endif; ?>
+    <?php if (!empty($success)): ?>
+        <div style="background:#d1fae5; color:#064e3b; padding:12px; border-radius:10px; margin-bottom:20px;">
+            <?php echo htmlspecialchars($success); ?>
+        </div>
+    <?php endif; ?>
+
     <div class="selector-box">
         <label>Buscar Paciente Existente:</label>
         <select onchange="autoLlenar(this)">
@@ -56,6 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </select>
         <button type="submit">Guardar Paciente</button>
     </form>
+    <p style="margin-top:18px; text-align:center;"><a href="lista_pacientes.php" style="color:#007bff; text-decoration:none;">← Volver al Dashboard</a></p>
 </div>
 
 <script>

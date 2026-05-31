@@ -1,8 +1,16 @@
-# Denegar acceso directo al contenido interno de SaludWeb.
-<IfModule mod_authz_core.c>
-    Require all denied
-</IfModule>
-<IfModule !mod_authz_core.c>
-    Order allow,deny
-    Deny from all
-</IfModule>
+# Habilitar el motor de reescritura y proteger listados de directorio
+Options -Indexes
+DirectoryIndex index.php
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^lista/?$ lista_pacientes.php [L,QSA]
+RewriteRule ^registro/?$ registro_paciente.php [L,QSA]
+RewriteRule ^escritorio/?$ escritorio.php [L,QSA]
+RewriteRule ^api-docs/?$ api_docs.php [L,QSA]
+RewriteRule ^papelera/?$ papelera.php [L,QSA]
+RewriteRule ^chat/?$ chat.php [L,QSA]
+RewriteRule ^medicos/?$ lista_medicos.php [L,QSA]
+RewriteRule ^prescripciones/?$ lista_prescripciones.php [L,QSA]
+RewriteRule ^farmacia/?$ farmacia.php [L,QSA]

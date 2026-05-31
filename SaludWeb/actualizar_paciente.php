@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/db.php';;
+require_once __DIR__ . '/db.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id = $_POST['id'];
@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$dni, $nombre, $obra, $id]);
 
-        header("Location: lista?mensaje=actualizado");
+        header("Location: lista_pacientes.php?mensaje=actualizado");
         exit();
     } catch (PDOException $e) {
         echo "Error al actualizar: " . $e->getMessage();

@@ -31,7 +31,7 @@
                 <h1>Escritorio de SaludWEB</h1>
                 <p>Panel de acceso rápido a las funciones más importantes del sistema.</p>
             </div>
-            <a href="lista">Volver al Dashboard</a>
+            <a href="lista_pacientes.php">Volver al Dashboard</a>
         </div>
 
         <div class="stats">
@@ -53,25 +53,25 @@
             <div class="card highlight">
                 <h2>📋 Lista de pacientes</h2>
                 <p>Revisa los pacientes activos, su nivel de gravedad y el estado general del sistema.</p>
-                <a href="lista">Ir a lista</a>
+                <a href="lista_pacientes.php">Ir a lista</a>
             </div>
 
             <div class="card highlight">
                 <h2>➕ Registrar nuevo paciente</h2>
                 <p>Crea pacientes nuevos rápidamente con DNI, nombre y obra social.</p>
-                <a href="registro">Registrar</a>
+                <a href="registro_paciente.php">Registrar</a>
             </div>
 
             <div class="card highlight">
                 <h2>🗑️ Ver papelera</h2>
                 <p>Restaura o elimina permanentemente pacientes que hayan sido dados de baja.</p>
-                <a href="papelera">Ir a papelera</a>
+                <a href="papelera.php">Ir a papelera</a>
             </div>
 
             <div class="card">
                 <h2>💬 Asistente AI</h2>
                 <p>Envía preguntas sobre el proyecto o la API directamente desde la interfaz web.</p>
-                <a href="chat">Abrir asistente</a>
+                <a href="chat.php">Abrir asistente</a>
             </div>
 
             <div class="card">
@@ -82,12 +82,12 @@
             <div class="card">
                 <h2>🧠 API del proyecto</h2>
                 <p>Accede a las rutas REST para pacientes o utiliza la ruta de chat para ayuda inteligente.</p>
-                <a href="/prog3-clase2/api/pacientes">Ver API</a>
+                <a href="api_docs.php">Ver API</a>
             </div>
             <div class="card">
                 <h2>📄 Documentación API</h2>
                 <p>Ver la documentación generada automáticamente para los endpoints de la API.</p>
-                <a href="api-docs">Abrir Docs</a>
+                <a href="api_docs.php">Abrir Docs</a>
             </div>
         </div>
     </div>

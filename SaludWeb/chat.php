@@ -33,7 +33,7 @@
                 <h1>Asistente Inteligente</h1>
                 <p>Haz preguntas sobre el proyecto, las rutas API o cómo usar SaludWEB.</p>
             </div>
-            <a href="lista">← Volver al dashboard</a>
+            <a href="lista_pacientes.php">← Volver al dashboard</a>
         </div>
 
         <div class="card">
@@ -51,7 +51,7 @@
         const chatArea = document.getElementById('chatArea');
         const chatInput = document.getElementById('chatInput');
         const sendButton = document.getElementById('sendButton');
-        const apiUrl = window.location.origin + window.location.pathname.replace(/\/chat\/?$/, '/api/chat');
+        const apiUrl = 'api/chat.php';
 
         function addMessage(text, sender) {
             const wrapper = document.createElement('div');

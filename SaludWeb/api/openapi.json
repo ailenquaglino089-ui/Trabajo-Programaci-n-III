@@ -1,0 +1,66 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "SaludWEB API",
+    "version": "1.0.0",
+    "description": "Endpoints básicos para el dashboard de SaludWEB."
+  },
+  "paths": {
+    "/api/pacientes.php": {
+      "get": {
+        "summary": "Lista todos los pacientes",
+        "responses": {
+          "200": {
+            "description": "Lista de pacientes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/medicos.php": {
+      "get": {
+        "summary": "Lista todos los médicos",
+        "responses": {
+          "200": {"description": "Lista de médicos"}
+        }
+      },
+      "patch": {
+        "summary": "Actualiza el estado de un médico",
+        "parameters": [{"name": "id", "in": "query", "required": true, "schema": {"type": "integer"}}],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {"type": "object", "properties": {"activo": {"type": "integer"}}}
+            }
+          }
+        },
+        "responses": {"200": {"description": "Estado actualizado"}}
+      }
+    },
+    "/api/prescripciones.php": {
+      "delete": {
+        "summary": "Elimina una prescripción",
+        "parameters": [{"name": "id", "in": "query", "required": true, "schema": {"type": "integer"}}],
+        "responses": {"200": {"description": "Prescripción eliminada"}}
+      }
+    },
+    "/api/chat.php": {
+      "post": {
+        "summary": "Envía mensajes al asistente inteligente",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {"schema": {"type": "object", "properties": {"message": {"type": "string"}}}}
+          }
+        },
+        "responses": {"200": {"description": "Respuesta del asistente"}}
+      }
+    }
+  }
+}

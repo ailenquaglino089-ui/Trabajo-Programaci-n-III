@@ -24,11 +24,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sql = "INSERT INTO triages (id_paciente, nivel_gravedad, observaciones, fecha) VALUES (?, ?, ?, NOW())";
         $pdo->prepare($sql)->execute([$id_p, $gravedad, $obs]);
 
-        header("Location: lista?mensaje=Triage guardado correctamente");
+        header("Location: lista_pacientes.php?mensaje=Triage guardado correctamente");
     } catch (Exception $e) {
         die("Error al guardar: " . $e->getMessage());
     }
 } else {
-    header("Location: triage");
+    header("Location: triage.php");
     exit();
 }

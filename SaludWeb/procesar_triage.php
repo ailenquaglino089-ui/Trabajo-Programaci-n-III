@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/db.php';; // Conexión a la base de datos
+require_once __DIR__ . '/db.php'; // Conexión a la base de datos
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Recibimos los datos del formulario de triage

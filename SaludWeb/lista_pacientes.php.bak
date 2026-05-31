@@ -1,0 +1,198 @@
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+session_start();
+require_once __DIR__ . '/db.php';
+
+$buscar = trim($_GET['buscar'] ?? '');
+$mensaje = '';
+$pacientes = [];
+$stats = [
+    'total_pacientes' => 0,
+    'recetas_activas' => 0,
+    'criticos' => 0,
+    'pendientes' => 0,
+    'promedio_dolor' => 0,
+];
+
+try {
+    $sql = "
+        SELECT p.*, o.nombre_obra,
+            (
+                SELECT COUNT(*) FROM prescripciones pr
+                WHERE pr.id_paciente = p.id
+                  AND pr.estado = 'activa'
+            ) AS recetas_activas,
+            t.nivel_gravedad,
+            t.fecha AS fecha_ult_triage
+        FROM pacientes p
+        LEFT JOIN obras_sociales o ON p.id_obra_social = o.id
+        LEFT JOIN (
+            SELECT tr1.id_paciente, tr1.nivel_gravedad, tr1.fecha
+            FROM triages tr1
+            INNER JOIN (
+                SELECT id_paciente, MAX(fecha) AS fecha_max
+                FROM triages
+                GROUP BY id_paciente
+            ) tr2 ON tr1.id_paciente = tr2.id_paciente
+                AND tr1.fecha = tr2.fecha_max
+        ) t ON p.id = t.id_paciente
+        WHERE p.activo = 1
+    ";
+
+    $params = [];
+    if ($buscar !== '') {
+        $sql .= " AND (p.nombre LIKE ? OR p.dni LIKE ? )";
+        $params[] = "%$buscar%";
+        $params[] = "%$buscar%";
+    }
+
+    $sql .= " ORDER BY t.nivel_gravedad DESC, p.nombre ASC";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    $pacientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $statsStmt = $pdo->query("SELECT COUNT(*) AS total_pacientes FROM pacientes WHERE activo = 1");
+    $stats['total_pacientes'] = (int)$statsStmt->fetchColumn();
+
+    $statsStmt = $pdo->query("SELECT COUNT(*) FROM prescripciones WHERE estado = 'activa'");
+    $stats['recetas_activas'] = (int)$statsStmt->fetchColumn();
+
+    $statsQuery = "
+        SELECT
+            SUM(IF(t.nivel_gravedad >= 8, 1, 0)) AS criticos,
+            SUM(IF(t.nivel_gravedad IS NULL OR t.nivel_gravedad < 8, 1, 0)) AS pendientes,
+            AVG(t.nivel_gravedad) AS promedio_dolor
+        FROM pacientes p
+        LEFT JOIN (
+            SELECT tr1.id_paciente, tr1.nivel_gravedad, tr1.fecha
+            FROM triages tr1
+            INNER JOIN (
+                SELECT id_paciente, MAX(fecha) AS fecha_max
+                FROM triages
+                GROUP BY id_paciente
+            ) tr2 ON tr1.id_paciente = tr2.id_paciente
+                AND tr1.fecha = tr2.fecha_max
+        ) t ON p.id = t.id_paciente
+        WHERE p.activo = 1
+    ";
+    $statsStmt = $pdo->query($statsQuery);
+    $row = $statsStmt->fetch(PDO::FETCH_ASSOC);
+    if ($row) {
+        $stats['criticos'] = (int)$row['criticos'];
+        $stats['pendientes'] = (int)$row['pendientes'];
+        $stats['promedio_dolor'] = $row['promedio_dolor'] !== null ? round((float)$row['promedio_dolor'], 1) : 0;
+    }
+} catch (Exception $e) {
+    $mensaje = 'Error de consulta: ' . $e->getMessage();
+}
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SaludWEB Pro — Lista de Pacientes</title>
+    <style>
+        :root{--bg:#f3f6f9;--card:#fff;--muted:#6b7280;--accent:#2563eb}
+        body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:var(--bg); margin:0;padding:28px;color:#0f172a}
+        .wrap{max-width:1200px;margin:0 auto}
+        header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+        header h1{display:flex;align-items:center;gap:12px;font-size:28px;margin:0}
+        .search{background:var(--card);padding:12px;border-radius:12px;box-shadow:0 6px 20px rgba(2,6,23,0.06);}
+        .grid{display:grid;grid-template-columns:1fr 320px;gap:20px}
+        .panel{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 8px 30px rgba(15,23,42,0.06)}
+        .cards{display:flex;gap:12px;margin-bottom:12px}
+        .card{flex:1;padding:14px;border-radius:10px;background:#f8fafc}
+        table{width:100%;border-collapse:collapse;margin-top:12px}
+        th,td{padding:10px;border:1px solid #e6edf3;text-align:left}
+        th{background:#f1f5f9}
+        .actions a{display:inline-block;padding:8px 12px;border-radius:8px;text-decoration:none;color:#fff;background:var(--accent);}
+        .badge{display:inline-block;padding:6px 10px;border-radius:999px;background:#eef2ff;color:var(--accent);font-weight:700}
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <header>
+            <h1>SaludWEB Pro <small style="font-size:12px;color:var(--muted)">— Lista de Atención</small></h1>
+            <div class="actions">
+                <a href="registro_paciente.php">Registrar Nuevo Paciente</a>
+            </div>
+        </header>
+
+        <div class="search panel">
+            <form method="get" action="lista">
+                <input type="text" name="buscar" placeholder="Buscar por nombre o DNI..." value="<?php echo htmlspecialchars($buscar); ?>" style="width:100%;padding:12px;border-radius:8px;border:1px solid #e6edf3">
+            </form>
+        </div>
+
+        <div class="grid" style="margin-top:18px">
+            <div>
+                <div class="cards">
+                    <div class="card">
+                        <strong>TOTAL PACIENTES</strong>
+                        <div style="font-size:20px;margin-top:6px"><?php echo $stats['total_pacientes']; ?></div>
+                    </div>
+                    <div class="card">
+                        <strong>RECETAS ACTIVAS</strong>
+                        <div style="font-size:20px;margin-top:6px"><?php echo $stats['recetas_activas']; ?></div>
+                    </div>
+                    <div class="card">
+                        <strong>CASOS CRÍTIICOS</strong>
+                        <div style="font-size:20px;margin-top:6px"><?php echo $stats['criticos']; ?></div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2 style="margin:0 0 12px">Pacientes Registrados</h2>
+                    <?php if ($mensaje): ?>
+                        <div style="padding:10px;background:#fee2e2;border-radius:8px;color:#991b1b;margin-bottom:12px"><?php echo htmlspecialchars($mensaje); ?></div>
+                    <?php endif; ?>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:60px">ID</th>
+                                <th>Nombre</th>
+                                <th style="width:160px">DNI</th>
+                                <th style="width:120px">Obra Social</th>
+                                <th style="width:140px">Último Triage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (count($pacientes) === 0): ?>
+                                <tr><td colspan="5">No hay pacientes para mostrar.</td></tr>
+                            <?php else: ?>
+                                <?php foreach ($pacientes as $p): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($p['id']); ?></td>
+                                        <td><?php echo htmlspecialchars($p['nombre']); ?></td>
+                                        <td><?php echo htmlspecialchars($p['dni']); ?></td>
+                                        <td><?php echo htmlspecialchars($p['nombre_obra'] ?? 'Particular'); ?></td>
+                                        <td><?php echo htmlspecialchars($p['fecha_ult_triage'] ?? '-'); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <aside>
+                <div class="panel">
+                    <h3>Indicadores</h3>
+                    <p><span class="badge"><?php echo $stats['criticos']; ?></span> Críticos</p>
+                    <p><strong>Pendientes:</strong> <?php echo $stats['pendientes']; ?></p>
+                    <p><strong>Dolor promedio:</strong> <?php echo $stats['promedio_dolor']; ?></p>
+                    <hr>
+                    <p style="font-size:13px;color:var(--muted)">Acciones rápidas</p>
+                    <p><a href="registro_paciente.php">Nuevo paciente</a></p>
+                    <p><a href="papelera.php">Ver papelera</a></p>
+                </div>
+            </aside>
+        </div>
+    </div>
+</body>
+</html>
