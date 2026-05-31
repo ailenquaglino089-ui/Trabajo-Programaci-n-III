@@ -53,8 +53,8 @@ try {
 
         <?php if ($status['db']): ?>
             <div class="actions">
-                <a href="lista_pacientes.php">Ir al Dashboard</a>
-                <a href="registro_paciente.php" class="secondary">Registrar Paciente</a>
+                <a href="/prog3-clase2/lista">Ir al Dashboard</a>
+                <a href="/prog3-clase2/registro" class="secondary">Registrar Paciente</a>
                 <a href="papelera.php" class="secondary">Ver Papelera</a>
                 <a href="escritorio.php" class="secondary">Ir al Escritorio</a>
             </div>

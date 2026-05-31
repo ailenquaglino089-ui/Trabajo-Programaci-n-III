@@ -35,10 +35,3 @@ error_reporting(E_ALL);
     </form>
 </body>
 </html>
-// Antes de insertar, verificamos si el DNI ya existe
-$checkDni = $pdo->prepare("SELECT COUNT(*) FROM pacientes WHERE dni = ?");
-$checkDni->execute([$dni]);
-
-if ($checkDni->fetchColumn() > 0) {
-    die("❌ Error: Ya existe un paciente registrado con el DNI $dni.");
-}

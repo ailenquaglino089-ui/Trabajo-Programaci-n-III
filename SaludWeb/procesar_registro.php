@@ -10,7 +10,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
         // 3. Preparamos la consulta SQL
-        $sql = "INSERT INTO pacientes (dni, nombre, id_obra_social) VALUES (:dni, :nombre, :obra)";
+        // Usamos ON DUPLICATE KEY UPDATE para actualizar si el DNI ya existe y asegurar que esté activo
+        $sql = "INSERT INTO pacientes (dni, nombre, id_obra_social, activo) VALUES (:dni, :nombre, :obra, 1) 
+                ON DUPLICATE KEY UPDATE nombre = VALUES(nombre), id_obra_social = VALUES(id_obra_social), activo = 1";
         $stmt = $pdo->prepare($sql);
         
         // 4. Ejecutamos pasando los valores
@@ -20,11 +22,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':obra' => $obra
         ]);
 
+        // Verificamos si fue una inserción nueva o una actualización
+        $esActualizacion = $stmt->rowCount() == 2; // MySQL devuelve 2 si actualizó una fila existente
+        $titulo = $esActualizacion ? "✅ ¡Datos Actualizados!" : "✅ ¡Registro guardado!";
+        $texto = $esActualizacion ? "El paciente con DNI <strong>$dni</strong> ya existía y sus datos fueron actualizados." : "El paciente <strong>$nombre</strong> fue dado de alta correctamente.";
+
         // 5. Mensaje de éxito
         echo "<html><body style='font-family:sans-serif; text-align:center; padding-top:50px;'>";
-        echo "<h1 style='color:green;'>✅ ¡Registro guardado en la DB!</h1>";
-        echo "<p>El paciente <strong>$nombre</strong> fue dado de alta correctamente.</p>";
-        echo "<br><a href='registro_paciente.php' style='text-decoration:none; color:blue;'>← Volver a registrar otro</a>";
+        echo "<h1 style='color:green;'>$titulo</h1>";
+        echo "<p>$texto</p>";
+        echo "<br><a href='/prog3-clase2/lista' style='text-decoration:none; color:blue;'>← Volver al Dashboard</a>";
         echo "</body></html>";
         
     } catch (PDOException $e) {

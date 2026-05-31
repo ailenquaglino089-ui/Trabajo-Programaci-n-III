@@ -2,8 +2,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 session_start();
-require_once __DIR__ . '/db.php';
 
+require_once __DIR__ . '/db.php';
 $pacientes = [];
 try {
     $search = $_GET['q'] ?? '';
@@ -145,7 +145,7 @@ try {
     <div class="grid-menu">
         <?php 
         $menu = [
-            ['l' => 'Registrar Nuevo paciente', 'u' => 'registro_paciente.php', 'c' => '#4f46e5', 'i' => '👤'],
+            ['l' => 'Registrar Nuevo paciente', 'u' => '/prog3-clase2/registro', 'c' => '#4f46e5', 'i' => '👤'],
             ['l' => 'MRx Digital', 'u' => 'emitir_prescripcion.php', 'c' => '#10b981', 'i' => '💊'],
             ['l' => 'Ver Recetas', 'u' => 'lista_prescripciones.php', 'c' => '#3b82f6', 'i' => '📄'],
             ['l' => 'Módulos Farmacia', 'u' => 'farmacia.php', 'c' => '#f59e0b', 'i' => '🏥'],
@@ -163,10 +163,10 @@ try {
         <?php endforeach; ?>
     </div>
 
-    <form class="search-bar" method="GET">
+    <form class="search-bar" method="GET" action="/prog3-clase2/lista">
         <input type="text" name="q" value="<?= htmlspecialchars($search) ?>" placeholder="Buscar por nombre o DNI de paciente...">
-        <button type="submit"><span style="font-size: 18px;">🔍</span> BUSCAR</button>
-        <?php if($search): ?><a href="lista_pacientes.php" style="padding:12px; color:var(--danger)">Limpiar</a><?php endif; ?>
+        <button type="submit" translate="no" class="notranslate">BUSCAR</button>
+        <?php if($search): ?><a href="/prog3-clase2/lista" style="padding:12px; color:var(--danger)">Limpiar</a><?php endif; ?>
     </form>
 
     <div class="grid-stats">
@@ -178,6 +178,7 @@ try {
         <div class="stat-card" style="border-left-color:var(--success)"><div class="stat-label">Recetas</div><span><?=$totalRecetas?></span></div>
     </div>
 
+    <?php if (!empty($pacientes)): ?>
     <div class="main-layout">
         <div class="box">
             <h3>Lista de Atención</h3>
@@ -221,6 +222,11 @@ try {
             </div>
         </div>
     </div>
+    <?php else: ?>
+        <div class="box" style="text-align:center; padding:40px;">
+            <h3>No hay pacientes para mostrar.</h3>
+        </div>
+    <?php endif; ?>
 </div>
 </body>
 </html>

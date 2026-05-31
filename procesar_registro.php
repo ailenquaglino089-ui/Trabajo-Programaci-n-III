@@ -1,6 +1,6 @@
 <?php
 // 1. Incluimos la conexión que creaste recién
-require_once 'db.php'; 
+require_once __DIR__ . '/SaludWeb/db.php'; 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // 2. Capturamos los datos del formulario
@@ -10,7 +10,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
         // 3. Preparamos la consulta SQL
-        $sql = "INSERT INTO pacientes (dni, nombre, id_obra_social) VALUES (:dni, :nombre, :obra)";
+        // Usamos ON DUPLICATE KEY UPDATE para evitar el error de DNI duplicado y actualizar el registro existente
+        $sql = "INSERT INTO pacientes (dni, nombre, id_obra_social, activo) VALUES (:dni, :nombre, :obra, 1) 
+                ON DUPLICATE KEY UPDATE nombre = VALUES(nombre), id_obra_social = VALUES(id_obra_social), activo = 1";
         $stmt = $pdo->prepare($sql);
         
         // 4. Ejecutamos pasando los valores
@@ -20,11 +22,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':obra' => $obra
         ]);
 
+        // Verificamos si fue una inserción o una actualización de un DNI existente
+        $esActualizacion = $stmt->rowCount() == 2;
+        $titulo = $esActualizacion ? "✅ ¡Datos Actualizados!" : "✅ ¡Registro guardado!";
+        $texto = $esActualizacion ? "Los datos para el DNI <strong>$dni</strong> han sido actualizados." : "El paciente <strong>$nombre</strong> fue dado de alta correctamente.";
+
         // 5. Mensaje de éxito
         echo "<html><body style='font-family:sans-serif; text-align:center; padding-top:50px;'>";
-        echo "<h1 style='color:green;'>✅ ¡Registro guardado en la DB!</h1>";
-        echo "<p>El paciente <strong>$nombre</strong> fue dado de alta correctamente.</p>";
-        echo "<br><a href='registro' style='text-decoration:none; color:blue;'>← Volver a registrar otro</a>";
+        echo "<h1 style='color:green;'>$titulo</h1>";
+        echo "<p>$texto</p>";
+        echo "<br><a href='lista' style='text-decoration:none; color:blue;'>← Volver al Dashboard</a>";
         echo "</body></html>";
         
     } catch (PDOException $e) {

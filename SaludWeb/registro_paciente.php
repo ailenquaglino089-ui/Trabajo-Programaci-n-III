@@ -2,6 +2,7 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+session_start();
 
 $error = null;
 $success = null;
@@ -13,24 +14,6 @@ try {
     // Cargar pacientes para el autocompletado
     $stmt = $pdo->query("SELECT * FROM pacientes WHERE activo = 1 ORDER BY nombre ASC");
     $pacientes_db = $stmt->fetchAll();
-
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $dni = trim($_POST['dni'] ?? '');
-        $nombre = trim($_POST['nombre'] ?? '');
-        $obra = $_POST['id_obra_social'] ?? 1;
-
-        if ($dni === '' || $nombre === '') {
-            $error = 'DNI y nombre son obligatorios.';
-        } else {
-            $sql = "INSERT INTO pacientes (dni, nombre, id_obra_social, activo) 
-                    VALUES (?, ?, ?, 1) 
-                    ON DUPLICATE KEY UPDATE nombre = ?, id_obra_social = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$dni, $nombre, $obra, $nombre, $obra]);
-            header("Location: lista_pacientes.php");
-            exit;
-        }
-    }
 } catch (Exception $e) {
     $error = 'Error al acceder a la base de datos: ' . $e->getMessage();
 }
@@ -74,7 +57,7 @@ try {
         </select>
     </div>
 
-    <form method="POST">
+    <form action="procesar_registro.php" method="POST">
         <input type="text" name="dni" id="dn" placeholder="DNI" required>
         <input type="text" name="nombre" id="nom" placeholder="Nombre Completo" required>
         <select name="id_obra_social" id="obr">
@@ -84,7 +67,7 @@ try {
         </select>
         <button type="submit">Guardar Paciente</button>
     </form>
-    <p style="margin-top:18px; text-align:center;"><a href="lista_pacientes.php" style="color:#007bff; text-decoration:none;">← Volver al Dashboard</a></p>
+    <p style="margin-top:18px; text-align:center;"><a href="/prog3-clase2/lista" style="color:#007bff; text-decoration:none;">← Volver al Dashboard</a></p>
 </div>
 
 <script>

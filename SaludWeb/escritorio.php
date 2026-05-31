@@ -59,7 +59,7 @@
             <div class="card highlight">
                 <h2>➕ Registrar nuevo paciente</h2>
                 <p>Crea pacientes nuevos rápidamente con DNI, nombre y obra social.</p>
-                <a href="registro_paciente.php">Registrar</a>
+                <a href="/prog3-clase2/registro">Registrar</a>
             </div>
 
             <div class="card highlight">
