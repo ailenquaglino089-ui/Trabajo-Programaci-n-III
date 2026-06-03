@@ -105,6 +105,7 @@ try {
     </style>
 </head>
 <body>
+    <a href="lista" style="display: inline-block; margin-bottom: 20px; text-decoration: none; color: #007bff; font-weight: bold;">← Volver al Dashboard</a>
     <h1>MRx Digital - Emitir Receta Electrónica</h1>
     <p style="font-size:0.95rem; color:#444; margin-bottom:15px;">
         Este es el nuevo formato de receta electrónica válido para farmacias y obras sociales, conforme a la normativa vigente.

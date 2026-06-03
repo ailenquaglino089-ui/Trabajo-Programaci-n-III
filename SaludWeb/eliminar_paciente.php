@@ -32,6 +32,6 @@ try {
 }
 
 // 6. Volvemos automáticamente a la lista
-header("Location: lista_pacientes.php");
+header("Location: lista");
 exit();
 ?>

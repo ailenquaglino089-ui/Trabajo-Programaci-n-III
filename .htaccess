@@ -1,9 +1,47 @@
 RewriteEngine On
 RewriteBase /prog3-clase2/
+Options -Indexes -MultiViews
 
-# Desactivar MultiViews para evitar conflictos con archivos que se llamen parecido
-Options -MultiViews
+# Redirige accesos directos a .php hacia la ruta limpia, pero preserva las APIs internas
+RewriteCond %{REQUEST_METHOD} !POST
+RewriteCond %{REQUEST_URI} !^/prog3-clase2/SaludWeb/
+RewriteCond %{REQUEST_URI} !^/prog3-clase2/api/
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s/.*?/([^/\s]+)\.php [NC]
+RewriteRule ^(.+)\.php$ /prog3-clase2/$1 [R=301,L]
 
-# Mapear URLs limpias a la carpeta SaludWeb
-RewriteRule ^registro/?$ SaludWeb/registro_paciente.php [L,NC]
-RewriteRule ^lista/?$ SaludWeb/lista_pacientes.php [L,NC]
+# Alias de rutas limpias hacia los archivos reales de SaludWeb
+RewriteRule ^lista/?$ SaludWeb/lista_pacientes.php [L,NC,QSA]
+RewriteRule ^registro/?$ SaludWeb/registro_paciente.php [L,NC,QSA]
+RewriteRule ^nueva-receta/?$ SaludWeb/emitir_prescripcion.php [L,NC,QSA]
+RewriteRule ^api-docs/?$ SaludWeb/api_docs.php [L,NC,QSA]
+RewriteRule ^editar/?$ SaludWeb/editar_paciente.php [L,NC,QSA]
+RewriteRule ^eliminar/?$ SaludWeb/eliminar_paciente.php [L,NC,QSA]
+RewriteRule ^restaurar/?$ SaludWeb/restaurar_paciente.php [L,NC,QSA]
+RewriteRule ^ver-triage/?$ SaludWeb/ver_triage.php [L,NC,QSA]
+
+# Rutas limpias específicas para recetas y médicos
+RewriteRule ^medicos/?$ SaludWeb/lista_medicos.php [L,NC,QSA]
+RewriteRule ^prescripciones/?$ SaludWeb/lista_prescripciones.php [L,NC,QSA]
+
+# API internas de SaludWeb
+RewriteRule ^api/(.*)$ SaludWeb/api/$1 [L,NC,QSA]
+
+# Rutas que coinciden directamente con el nombre del archivo
+RewriteRule ^farmacia/?$ SaludWeb/farmacia.php [L,NC,QSA]
+RewriteRule ^escritorio/?$ SaludWeb/escritorio.php [L,NC,QSA]
+RewriteRule ^chat/?$ SaludWeb/chat.php [L,NC,QSA]
+RewriteRule ^papelera/?$ SaludWeb/papelera.php [L,NC,QSA]
+RewriteRule ^auditoria/?$ SaludWeb/auditoria.php [L,NC,QSA]
+RewriteRule ^triage/?$ SaludWeb/triage.php [L,NC,QSA]
+RewriteRule ^procesar_dispensa/?$ SaludWeb/procesar_dispensa.php [L,NC,QSA]
+RewriteRule ^procesar_registro/?$ SaludWeb/procesar_registro.php [L,NC,QSA]
+RewriteRule ^guardar_triage/?$ SaludWeb/guardar_triage.php [L,NC,QSA]
+RewriteRule ^lista_medicos/?$ SaludWeb/lista_medicos.php [L,NC,QSA]
+RewriteRule ^lista_prescripciones/?$ SaludWeb/lista_prescripciones.php [L,NC,QSA]
+RewriteRule ^configuracion/?$ SaludWeb/configuracion.php [L,NC,QSA]
+
+# Fallback general para cualquier archivo PHP existente dentro de SaludWeb
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}/prog3-clase2/SaludWeb/$1.php -f
+RewriteRule ^(.+?)/?$ SaludWeb/$1.php [L,NC,QSA]

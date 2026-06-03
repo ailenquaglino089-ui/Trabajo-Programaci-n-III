@@ -95,7 +95,7 @@ try {
             </tbody>
         </table>
         <br>
-        <a href="lista_pacientes.php" style="color:#7f8c8d;">← Volver al inicio</a>
+        <a href="lista" style="color:#7f8c8d;">← Volver al inicio</a>
     </div>
 </body>
 </html>

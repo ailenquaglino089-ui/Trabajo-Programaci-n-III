@@ -2,7 +2,7 @@
 require_once __DIR__ . '/db.php';
 
 $id = $_GET['id'] ?? null;
-if (!$id) { header("Location: lista_pacientes.php"); exit(); }
+if (!$id) { header("Location: lista"); exit(); }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nombre = $_POST['nombre'];
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->execute([$nombre, $dni, $obra, $id]);
 
     // Redirigir con mensaje para que aparezca la alerta
-    header("Location: lista_pacientes.php?mensaje=Paciente actualizado con éxito");
+    header("Location: lista?mensaje=Paciente actualizado con éxito");
     exit();
 }
 
@@ -49,7 +49,7 @@ $p = $stmt->fetch();
             <option value="3" <?php if($p['id_obra_social']==3) echo 'selected'; ?>>PAMI</option>
         </select>
         <button type="submit" class="btn">Guardar Cambios</button>
-        <a href="lista_pacientes.php" class="cancel">Volver sin cambios</a>
+        <a href="lista" class="cancel">Volver sin cambios</a>
     </form>
 </div>
 

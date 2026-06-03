@@ -57,7 +57,7 @@ try {
         </select>
     </div>
 
-    <form action="procesar_registro.php" method="POST">
+    <form action="procesar_registro" method="POST">
         <input type="text" name="dni" id="dn" placeholder="DNI" required>
         <input type="text" name="nombre" id="nom" placeholder="Nombre Completo" required>
         <select name="id_obra_social" id="obr">
@@ -67,7 +67,7 @@ try {
         </select>
         <button type="submit">Guardar Paciente</button>
     </form>
-    <p style="margin-top:18px; text-align:center;"><a href="/prog3-clase2/lista" style="color:#007bff; text-decoration:none;">← Volver al Dashboard</a></p>
+    <p style="margin-top:18px; text-align:center;"><a href="lista" style="color:#007bff; text-decoration:none;">← Volver al Dashboard</a></p>
 </div>
 
 <script>

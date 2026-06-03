@@ -50,7 +50,9 @@ try {
         $percent = ($totalPacientes > 0) ? ($stat['total'] / $totalPacientes) * 100 : 0;
         $chartData[] = ['name' => $stat['nombre_obra'], 'percent' => $percent];
     }
-} catch (Exception $e) {}
+} catch (Exception $e) {
+    $error_db = "Error al cargar datos: " . $e->getMessage();
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -135,8 +137,12 @@ try {
             <div class="logo-box">✚</div>
             <div class="logo-text">SaludWeb<span class="logo-pro">PRO</span></div>
         </div>
-        <a href="configuracion.php" class="config-link">⚙️ Configuración</a>
+        <a href="configuracion" class="config-link">⚙️ Configuración</a>
     </div>
+
+    <?php if(isset($error_db)): ?>
+        <div style="background:#fee2e2; color:#b91c1c; padding:15px; border-radius:10px; border-left:5px solid #ef4444; margin-bottom:20px;"><b>Error de Sistema:</b> <?= $error_db ?></div>
+    <?php endif; ?>
     
     <?php if(isset($_SESSION['mensaje'])): ?>
         <div class="alert"><?= $_SESSION['mensaje']; unset($_SESSION['mensaje']); ?></div>
@@ -145,15 +151,15 @@ try {
     <div class="grid-menu">
         <?php 
         $menu = [
-            ['l' => 'Registrar Nuevo paciente', 'u' => '/prog3-clase2/registro', 'c' => '#4f46e5', 'i' => '👤'],
-            ['l' => 'MRx Digital', 'u' => 'emitir_prescripcion.php', 'c' => '#10b981', 'i' => '💊'],
-            ['l' => 'Ver Recetas', 'u' => 'lista_prescripciones.php', 'c' => '#3b82f6', 'i' => '📄'],
-            ['l' => 'Módulos Farmacia', 'u' => 'farmacia.php', 'c' => '#f59e0b', 'i' => '🏥'],
-            ['l' => 'Gestión Médicos', 'u' => 'lista_medicos.php', 'c' => '#ec4899', 'i' => '👨‍⚕️'],
-            ['l' => 'Asistente AI', 'u' => 'chat.php', 'c' => '#8b5cf6', 'i' => '🤖'],
-            ['l' => 'Escritorio', 'u' => 'escritorio.php', 'c' => '#06b6d4', 'i' => '🖥️'],
-            ['l' => 'API Docs', 'u' => 'api_docs.php', 'c' => '#64748b', 'i' => '📚'],
-            ['l' => 'Ver Papelera', 'u' => 'papelera.php', 'c' => '#ef4444', 'i' => '🗑️'],
+            ['l' => 'Registrar Nuevo paciente', 'u' => 'registro', 'c' => '#4f46e5', 'i' => '👤'],
+            ['l' => 'MRx Digital', 'u' => 'nueva-receta', 'c' => '#10b981', 'i' => '💊'],
+            ['l' => 'Ver Recetas', 'u' => 'prescripciones', 'c' => '#3b82f6', 'i' => '📄'],
+            ['l' => 'Módulos Farmacia', 'u' => 'farmacia', 'c' => '#f59e0b', 'i' => '🏥'],
+            ['l' => 'Gestión Médicos', 'u' => 'medicos', 'c' => '#ec4899', 'i' => '👨‍⚕️'],
+            ['l' => 'Asistente AI', 'u' => 'chat', 'c' => '#8b5cf6', 'i' => '🤖'],
+            ['l' => 'Escritorio', 'u' => 'escritorio', 'c' => '#06b6d4', 'i' => '🖥️'],
+            ['l' => 'API Docs', 'u' => 'api-docs', 'c' => '#64748b', 'i' => '📚'],
+            ['l' => 'Ver Papelera', 'u' => 'papelera', 'c' => '#ef4444', 'i' => '🗑️'],
         ];
         foreach($menu as $m): ?>
             <a href="<?= $m['u'] ?>" class="menu-item" style="border-bottom: 5px solid <?= $m['c'] ?>; color: <?= $m['c'] ?>;" onmouseover="this.style.background='<?= $m['c'] ?>'" onmouseout="this.style.background='white'">
@@ -163,10 +169,10 @@ try {
         <?php endforeach; ?>
     </div>
 
-    <form class="search-bar" method="GET" action="/prog3-clase2/lista">
+    <form class="search-bar" method="GET" action="lista">
         <input type="text" name="q" value="<?= htmlspecialchars($search) ?>" placeholder="Buscar por nombre o DNI de paciente...">
         <button type="submit" translate="no" class="notranslate">BUSCAR</button>
-        <?php if($search): ?><a href="/prog3-clase2/lista" style="padding:12px; color:var(--danger)">Limpiar</a><?php endif; ?>
+        <?php if($search): ?><a href="lista" style="padding:12px; color:var(--danger)">Limpiar</a><?php endif; ?>
     </form>
 
     <div class="grid-stats">
@@ -197,12 +203,12 @@ try {
                         <td><span class="badge" style="background:var(--success)">ACTIVO</span></td>
                         <td><?=htmlspecialchars($p['nombre_obra'] ?? 'Particular')?></td>
                         <td class="acciones">
-                            <a href="ver_triage.php?id=<?=$p['id']?>" title="Ver Expediente">👁️</a>
-                            <a href="triage.php?id=<?=$p['id']?>" title="Nuevo Triage">📁</a>
-                            <a href="emitir_prescripcion.php?id_paciente=<?=$p['id']?>" title="Nueva Receta">💊</a>
-                            <a href="auditoria.php?id_paciente=<?=$p['id']?>" title="Consultas/Auditoría">📒</a>
-                            <a href="editar_paciente.php?id=<?=$p['id']?>" title="Editar">✏️</a>
-                            <a href="eliminar_paciente.php?id=<?=$p['id']?>" title="Eliminar" onclick="return confirm('¿Seguro?')">🗑️</a>
+                            <a href="ver-triage?id=<?=$p['id']?>" title="Ver Expediente">👁️</a>
+                            <a href="triage?id=<?=$p['id']?>" title="Nuevo Triage">📁</a>
+                            <a href="nueva-receta?id_paciente=<?=$p['id']?>" title="Nueva Receta">💊</a>
+                            <a href="auditoria?id_paciente=<?=$p['id']?>" title="Consultas/Auditoría">📒</a>
+                            <a href="editar?id=<?=$p['id']?>" title="Editar">✏️</a>
+                            <a href="eliminar?id=<?=$p['id']?>" title="Eliminar" onclick="return confirm('¿Seguro?')">🗑️</a>
                         </td>
                     </tr>
                     <?php endforeach; ?>

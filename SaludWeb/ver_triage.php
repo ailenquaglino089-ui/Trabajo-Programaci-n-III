@@ -68,7 +68,7 @@ try {
             <p style="margin:0; font-size: 1.2rem;"><strong><?php echo htmlspecialchars($paciente['nombre']); ?></strong></p>
             <p style="margin:5px 0 0 0; color: #666;">DNI: <?php echo htmlspecialchars($paciente['dni']); ?></p>
         </div>
-        <a href="lista_pacientes.php" class="btn-volver">← Volver al Dashboard</a>
+        <a href="lista" class="btn-volver">← Volver al Dashboard</a>
     </div>
 
     <div class="section-grid">

@@ -106,7 +106,7 @@ $mapaMedicamentos = $medsQuery->fetchAll(PDO::FETCH_KEY_PAIR);
     async function eliminarReceta(id) {
         if (!confirm('¿Estás seguro de que deseas eliminar permanentemente esta receta?')) return;
 
-        const apiUrl = 'api/prescripciones.php?id=' + id;
+        const apiUrl = 'api/prescripciones?id=' + id;
 
         try {
             const response = await fetch(apiUrl, { method: 'DELETE' });

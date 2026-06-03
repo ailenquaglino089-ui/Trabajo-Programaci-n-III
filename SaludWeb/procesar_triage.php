@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "<html><body style='font-family:sans-serif; text-align:center; padding-top:50px;'>";
         echo "<h1 style='color:green;'>✅ Triage Guardado</h1>";
         echo "<p>Los datos médicos se asociaron correctamente al paciente.</p>";
-        echo "<br><a href='lista_pacientes.php' style='text-decoration:none; color:blue;'>← Volver a la lista</a>";
+        echo "<br><a href='lista' style='text-decoration:none; color:blue;'>← Volver a la lista</a>";
         echo "</body></html>";
 
     } catch (PDOException $e) {

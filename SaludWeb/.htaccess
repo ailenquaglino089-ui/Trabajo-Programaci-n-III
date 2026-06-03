@@ -1,16 +1,39 @@
 # Habilitar el motor de reescritura y proteger listados de directorio
-Options -Indexes
+Options -Indexes -MultiViews
 DirectoryIndex index.php
 RewriteEngine On
 
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+# Definimos la ruta base del proyecto para evitar errores 404 en subcarpetas
+RewriteBase /prog3-clase2/SaludWeb/
+
+# 1. Redirección de .php a URL limpia (Solo si no es POST)
+RewriteCond %{REQUEST_METHOD} !POST
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s/prog3-clase2/SaludWeb/([^/\s]+)\.php [NC]
+RewriteRule ^([^/]+)\.php$ $1 [R=301,L]
+
+# 2. MAPEO ESPECÍFICO (Prioridad máxima)
 RewriteRule ^lista/?$ lista_pacientes.php [L,QSA]
 RewriteRule ^registro/?$ registro_paciente.php [L,QSA]
-RewriteRule ^escritorio/?$ escritorio.php [L,QSA]
-RewriteRule ^api-docs/?$ api_docs.php [L,QSA]
-RewriteRule ^papelera/?$ papelera.php [L,QSA]
-RewriteRule ^chat/?$ chat.php [L,QSA]
+RewriteRule ^nueva-receta/?$ emitir_prescripcion.php [L,QSA]
+RewriteRule ^configuracion/?$ configuracion.php [L,QSA]
 RewriteRule ^medicos/?$ lista_medicos.php [L,QSA]
 RewriteRule ^prescripciones/?$ lista_prescripciones.php [L,QSA]
 RewriteRule ^farmacia/?$ farmacia.php [L,QSA]
+RewriteRule ^escritorio/?$ escritorio.php [L,QSA]
+RewriteRule ^chat/?$ chat.php [L,QSA]
+RewriteRule ^papelera/?$ papelera.php [L,QSA]
+RewriteRule ^api-docs/?$ api_docs.php [L,QSA]
+RewriteRule ^ver-triage/?$ ver_triage.php [L,QSA]
+RewriteRule ^triage/?$ triage.php [L,QSA]
+RewriteRule ^auditoria/?$ auditoria.php [L,QSA]
+RewriteRule ^editar/?$ editar_paciente.php [L,QSA]
+RewriteRule ^eliminar/?$ eliminar_paciente.php [L,QSA]
+RewriteRule ^restaurar/?$ restaurar_paciente.php [L,QSA]
+RewriteRule ^guardar_triage/?$ guardar_triage.php [L,QSA]
+RewriteRule ^procesar_registro/?$ procesar_registro.php [L,QSA]
+RewriteRule ^procesar_dispensa/?$ procesar_dispensa.php [L,QSA]
+
+# 3. REGLA GENÉRICA (Respaldo)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^([^/]+)/?$ $1.php [L,QSA]

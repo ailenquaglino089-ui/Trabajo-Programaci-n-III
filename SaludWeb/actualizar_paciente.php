@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$dni, $nombre, $obra, $id]);
 
-        header("Location: lista_pacientes.php?mensaje=actualizado");
+        header("Location: lista?mensaje=actualizado");
         exit();
     } catch (PDOException $e) {
         echo "Error al actualizar: " . $e->getMessage();

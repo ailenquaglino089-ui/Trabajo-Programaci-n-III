@@ -24,7 +24,7 @@ $eliminados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
     <div class="box">
-        <a href="lista_pacientes.php" class="btn-volver">← Volver al Dashboard</a>
+        <a href="lista" class="btn-volver">← Volver al Dashboard</a>
         <h2>🗑️ Pacientes en Papelera</h2>
         <table>
             <thead>
@@ -35,7 +35,7 @@ $eliminados = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <tr>
                     <td><strong><?php echo htmlspecialchars($e['nombre']); ?></strong></td>
                     <td>
-                        <a href="restaurar_paciente.php?id=<?php echo $e['id']; ?>" title="Restaurar" style="text-decoration:none; font-size:1.2rem;">🔄</a>
+                        <a href="restaurar?id=<?php echo $e['id']; ?>" title="Restaurar" style="text-decoration:none; font-size:1.2rem;">🔄</a>
                     </td>
                 </tr>
                 <?php endforeach; ?>

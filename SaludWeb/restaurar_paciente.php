@@ -26,5 +26,5 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 }
 
 // Redirección automática al listado principal después de la operación
-header("Location: lista_pacientes.php");
+header("Location: lista");
 exit();

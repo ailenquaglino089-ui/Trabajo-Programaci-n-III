@@ -24,7 +24,7 @@ $medicos = $pdo->query("SELECT * FROM medicos ORDER BY activo DESC, nombre ASC")
 </head>
 <body>
     <div class="card">
-        <a href="lista_pacientes.php" class="btn-back">← Volver al Dashboard</a>
+        <a href="lista" class="btn-back">← Volver al Dashboard</a>
         <h1>👨‍⚕️ Panel de Profesionales</h1>
         <p>Administra los médicos habilitados para emitir recetas electrónicas.</p>
 
@@ -64,7 +64,7 @@ $medicos = $pdo->query("SELECT * FROM medicos ORDER BY activo DESC, nombre ASC")
 
     <script>
     async function toggleMedico(id, nuevoEstado) {
-const apiUrl = 'api/medicos.php?id=' + id;
+        const apiUrl = 'api/medicos?id=' + id;
         
         try {
             const response = await fetch(apiUrl, {

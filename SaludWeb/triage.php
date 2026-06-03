@@ -27,8 +27,9 @@ $todos = $pdo->query("SELECT nombre FROM pacientes WHERE activo = 1 ORDER BY nom
 </head>
 <body>
     <div class="card">
+        <a href="lista" style="text-decoration: none; color: #007bff; font-weight: bold; font-size: 0.9rem;">← Volver al Dashboard</a>
         <h2>📋 Cargar Triage</h2>
-        <form action="guardar_triage.php" method="POST">
+        <form action="guardar_triage" method="POST">
             <label>Paciente:</label>
             <input list="nombres" name="nombre_paciente" value="<?= htmlspecialchars($nombre_seleccionado) ?>" placeholder="Escribí o seleccioná..." required>
             <datalist id="nombres">
