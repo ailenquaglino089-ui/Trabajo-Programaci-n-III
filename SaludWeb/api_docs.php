@@ -23,7 +23,7 @@
             <span class="info">Documentación generada automáticamente</span>
         </div>
         <div>
-            <a href="lista">Volver al dashboard</a>
+            <a href="lista_pacientes.php">Volver al dashboard</a>
         </div>
     </div>
     <div id="swagger-ui"></div>

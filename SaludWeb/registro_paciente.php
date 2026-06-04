@@ -22,6 +22,7 @@ try {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro - SaludWEB</title>
     <style>
         body { font-family: sans-serif; background: #f0f2f5; display: flex; justify-content: center; padding-top: 50px; }
@@ -29,6 +30,13 @@ try {
         .selector-box { background: #e7f3ff; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #bde0fe; }
         input, select { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
         button { width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        @media (max-width: 640px) {
+            body { padding-top: 24px; }
+            .card { width: calc(100% - 24px); padding: 20px; }
+            .selector-box { padding: 12px; }
+            h2 { font-size: 1.3rem; }
+            input, select, button { font-size: 1rem; }
+        }
     </style>
 </head>
 <body>
@@ -44,6 +52,11 @@ try {
             <?php echo htmlspecialchars($success); ?>
         </div>
     <?php endif; ?>
+    <?php if (!empty($_GET['mensaje'])): ?>
+        <div style="background:#d1fae5; color:#064e3b; padding:12px; border-radius:10px; margin-bottom:20px;">
+            <?php echo htmlspecialchars($_GET['mensaje']); ?>
+        </div>
+    <?php endif; ?>
 
     <div class="selector-box">
         <label>Buscar Paciente Existente:</label>
@@ -57,7 +70,7 @@ try {
         </select>
     </div>
 
-    <form action="procesar_registro" method="POST">
+    <form action="procesar_registro.php" method="POST">
         <input type="text" name="dni" id="dn" placeholder="DNI" required>
         <input type="text" name="nombre" id="nom" placeholder="Nombre Completo" required>
         <select name="id_obra_social" id="obr">

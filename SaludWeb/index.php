@@ -1,6 +1,6 @@
 <?php
-// Corregimos la redirección: al estar ya dentro de SaludWeb, 
-// debemos ir directamente al Dashboard para evitar un bucle 404.
-header("Location: ./lista");
+// Redireccionamos al enlace original de registro usando la ruta limpia.
+// Esto funciona si Apache tiene habilitado mod_rewrite y se usa el .htaccess.
+header("Location: ./registro");
 exit();
 ?>

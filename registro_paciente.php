@@ -33,5 +33,9 @@ error_reporting(E_ALL);
 
         <button type="submit">Guardar y Continuar al Triage</button>
     </form>
+
+    <p style="margin-top:18px;">
+        <a href="lista" style="color:#007bff; text-decoration:none;">← Volver al Dashboard</a>
+    </p>
 </body>
 </html>

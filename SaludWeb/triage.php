@@ -17,19 +17,25 @@ $todos = $pdo->query("SELECT nombre FROM pacientes WHERE activo = 1 ORDER BY nom
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cargar Triage</title>
     <style>
-        body { font-family: sans-serif; background: #f0f2f5; display: flex; justify-content: center; padding: 50px; }
-        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 400px; }
-        input, select, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        body { font-family: sans-serif; background: #f0f2f5; display: flex; justify-content: center; padding: 30px; }
+        .card { background: white; padding: 30px; border-radius: 18px; box-shadow: 0 12px 28px rgba(0,0,0,0.08); width: 420px; max-width: 100%; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #d1d5db; border-radius: 12px; box-sizing: border-box; }
+        button { width: 100%; padding: 14px; background: #007bff; color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 700; }
+        @media (max-width: 680px) {
+            body { padding: 18px; }
+            .card { padding: 22px; }
+            h2 { font-size: 1.4rem; }
+        }
     </style>
 </head>
 <body>
     <div class="card">
-        <a href="lista" style="text-decoration: none; color: #007bff; font-weight: bold; font-size: 0.9rem;">← Volver al Dashboard</a>
+        <a href="lista_pacientes.php" style="text-decoration: none; color: #007bff; font-weight: bold; font-size: 0.9rem;">← Volver al Dashboard</a>
         <h2>📋 Cargar Triage</h2>
-        <form action="guardar_triage" method="POST">
+        <form action="guardar_triage.php" method="POST">
             <label>Paciente:</label>
             <input list="nombres" name="nombre_paciente" value="<?= htmlspecialchars($nombre_seleccionado) ?>" placeholder="Escribí o seleccioná..." required>
             <datalist id="nombres">

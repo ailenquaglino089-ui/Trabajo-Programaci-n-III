@@ -33,18 +33,39 @@ try {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Farmacia - SaludWEB</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; padding: 30px; }
-        .card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); max-width: 1000px; margin: auto; }
-        h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
-        .search { margin-bottom: 25px; padding: 15px; background: #eef2f3; border-radius: 5px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; padding: 20px; }
+        .card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.06); max-width: 1000px; margin: auto; }
+        h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; margin-bottom: 20px; }
+        .search { margin-bottom: 25px; padding: 15px; background: #eef2f3; border-radius: 12px; }
+        .search label { display: block; margin-bottom: 8px; font-weight: 700; }
+        .search input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 12px; margin-bottom: 12px; }
+        .search button, .search a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 10px; text-decoration: none; font-weight: 700; }
+        .search button { background: #3498db; color: white; border: none; cursor: pointer; }
+        .search a { background: #f8fafc; color: #2563eb; border: 1px solid #cbd5e1; }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th { background: #3498db; color: white; padding: 12px; text-align: left; }
-        td { padding: 12px; border-bottom: 1px solid #eee; }
-        .btn { background: #27ae60; color: white; padding: 8px 15px; border-radius: 4px; text-decoration: none; font-weight: bold; }
+        td { padding: 12px; border-bottom: 1px solid #eee; vertical-align: top; }
+        .btn { background: #27ae60; color: white; padding: 8px 15px; border-radius: 10px; text-decoration: none; font-weight: bold; display: inline-block; }
         .btn:hover { background: #219150; }
-        .badge { background: #d35400; color: white; padding: 3px 8px; border-radius: 10px; font-size: 0.8em; }
+        .badge { background: #d35400; color: white; padding: 4px 10px; border-radius: 999px; font-size: 0.78rem; display: inline-block; margin-top: 4px; }
+        @media (max-width: 900px) {
+            body { padding: 16px; }
+            .card { padding: 18px; }
+            .search { padding: 12px; }
+            .search button, .search a { width: 100%; justify-content: center; }
+        }
+        @media (max-width: 680px) {
+            table, thead, tbody, th, td, tr { display: block; }
+            thead tr { position: absolute; top: -9999px; left: -9999px; }
+            tr { margin-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
+            td { border: none; padding: 10px 0; position: relative; }
+            td::before { content: attr(data-label); font-weight: 700; display: block; margin-bottom: 6px; }
+            td:last-child { padding-bottom: 0; }
+            .search input { width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -60,7 +81,7 @@ try {
                 <label>Buscar Paciente (DNI):</label>
                 <input type="text" name="dni" value="<?php echo htmlspecialchars($dniFiltro); ?>" placeholder="Ingrese DNI...">
                 <button type="submit">Validar</button>
-                <a href="farmacia">Ver Todas</a>
+                <a href="farmacia.php">Ver Todas</a>
             </form>
         </div>
 
@@ -76,9 +97,9 @@ try {
             <tbody>
                 <?php foreach ($prescripciones as $p): ?>
                 <tr>
-                    <td><strong><?php echo htmlspecialchars($p['paciente_nombre']); ?></strong><br><small>DNI: <?php echo $p['paciente_dni']; ?></small></td>
-                    <td><?php echo htmlspecialchars($p['medico_nombre']); ?></td>
-                    <td>
+                    <td data-label="Paciente"><strong><?php echo htmlspecialchars($p['paciente_nombre']); ?></strong><br><small>DNI: <?php echo $p['paciente_dni']; ?></small></td>
+                    <td data-label="Médico"><?php echo htmlspecialchars($p['medico_nombre']); ?></td>
+                    <td data-label="Detalle de Receta">
                         <?php 
                         $meds = json_decode($p['medicamentos'], true);
                         foreach ($meds as $m) {
@@ -87,7 +108,7 @@ try {
                         }
                         ?>
                     </td>
-                    <td>
+                    <td data-label="Acción">
                         <a href="procesar_dispensa?id=<?php echo $p['id']; ?>" class="btn" onclick="return confirm('¿Confirma que entrega los medicamentos al paciente?')">Dispensar</a>
                     </td>
                 </tr>
@@ -95,7 +116,7 @@ try {
             </tbody>
         </table>
         <br>
-        <a href="lista" style="color:#7f8c8d;">← Volver al inicio</a>
+        <a href="lista_pacientes.php" style="color:#7f8c8d;">← Volver al inicio</a>
     </div>
 </body>
 </html>

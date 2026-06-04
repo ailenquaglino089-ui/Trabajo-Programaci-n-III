@@ -7,6 +7,7 @@ $medicos = $pdo->query("SELECT * FROM medicos ORDER BY activo DESC, nombre ASC")
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Médicos - SaludWEB</title>
     <style>
         body { font-family: 'Inter', sans-serif; background: #f8f9fc; padding: 30px; }
@@ -20,11 +21,20 @@ $medicos = $pdo->query("SELECT * FROM medicos ORDER BY activo DESC, nombre ASC")
         .inactive { background: #fee2e2; color: #991b1b; }
         .btn-toggle { border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.8rem; }
         .btn-back { display: inline-block; margin-bottom: 20px; text-decoration: none; color: #6366f1; font-weight: 600; }
+        @media (max-width: 760px) {
+            body { padding: 16px; }
+            .card { padding: 20px; }
+            table { display: block; width: 100%; overflow-x: auto; }
+            th, td { white-space: nowrap; }
+            .btn-toggle { width: 100%; margin-top: 8px; }
+            td { padding: 12px 8px; }
+            .badge { font-size: 0.72rem; }
+        }
     </style>
 </head>
 <body>
     <div class="card">
-        <a href="lista" class="btn-back">← Volver al Dashboard</a>
+        <a href="lista_pacientes.php" class="btn-back">← Volver al Dashboard</a>
         <h1>👨‍⚕️ Panel de Profesionales</h1>
         <p>Administra los médicos habilitados para emitir recetas electrónicas.</p>
 
@@ -64,7 +74,7 @@ $medicos = $pdo->query("SELECT * FROM medicos ORDER BY activo DESC, nombre ASC")
 
     <script>
     async function toggleMedico(id, nuevoEstado) {
-        const apiUrl = 'api/medicos?id=' + id;
+        const apiUrl = '/prog3-clase2/SaludWeb/api/medicos.php?id=' + id;
         
         try {
             const response = await fetch(apiUrl, {

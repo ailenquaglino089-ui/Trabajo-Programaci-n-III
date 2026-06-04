@@ -1,4 +1,4 @@
 <?php
-// Redirecciona al dashboard principal con ruta limpia
-header('Location: lista');
+// Redirecciona al registro usando la ruta limpia original.
+header('Location: registro');
 exit();
