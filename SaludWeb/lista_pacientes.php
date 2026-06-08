@@ -103,12 +103,13 @@ try {
 
         .main-layout { display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; }
         .box { background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
+        .box h3 { margin: 0 0 18px 0; color: white; background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); padding: 16px 18px; border-radius: 12px; font-size: 1.2rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 6px 15px rgba(37, 99, 235, 0.25); }
 
         /* Tabla con Badges de colores */
         table { width: 100%; border-collapse: collapse; }
-        th { color: #64748b; font-size: 12px; text-transform: uppercase; padding: 12px; }
-        td { padding: 12px; border-bottom: 1px solid #f1f5f9; }
-        .badge { padding: 4px 10px; border-radius: 999px; color: white; font-size: 10px; font-weight: bold; }
+        th { color: white; font-size: 13px; text-transform: uppercase; padding: 16px; font-weight: 900; background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); border: none; letter-spacing: 0.6px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+        td { padding: 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; }
+        .badge { padding: 6px 12px; border-radius: 999px; color: white; font-size: 11px; font-weight: 900; letter-spacing: 0.3px; }
         .acciones { display: flex; gap: 8px; justify-content: center; }
         .acciones a { text-decoration: none; transition: transform 0.2s; }
         .acciones a:hover { transform: scale(1.3); }
@@ -229,10 +230,10 @@ try {
                     ?>
                     <tr>
                         <td><span class="badge" style="background:<?=$color?>"><?=$txt?></span></td>
-                        <td><?=htmlspecialchars($p['nombre'] ?? 'Sin nombre')?></td>
-                        <td><?=htmlspecialchars($p['dni'] ?? 'N/A')?></td>
+                        <td style="font-weight: 900; color: #1e40af; font-size: 15px;"><?=htmlspecialchars($p['nombre'] ?? 'Sin nombre')?></td>
+                        <td style="font-weight: 800; color: #475569;"><?=htmlspecialchars($p['dni'] ?? 'N/A')?></td>
                         <td><span class="badge" style="background:var(--success)">ACTIVO</span></td>
-                        <td><?=htmlspecialchars($p['nombre_obra'] ?? 'Particular')?></td>
+                        <td style="font-weight: 700; color: #334155;"><?=htmlspecialchars($p['nombre_obra'] ?? 'Particular')?></td>
                         <td class="acciones">
                             <a href="ver_triage.php?id=<?=$p['id']?>" title="Ver Expediente">👁️</a>
                             <a href="triage.php?id=<?=$p['id']?>" title="Nuevo Triage">📁</a>
