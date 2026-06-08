@@ -100,6 +100,23 @@ try {
             display: flex; align-items: center; gap: 10px; transition: 0.3s; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4); font-size: 14px;
         }
         .search-bar button:hover { background: #3730a3; transform: scale(1.05); box-shadow: 0 6px 15px rgba(79, 70, 229, 0.5); }
+        .search-bar .button-secondary {
+            padding: 0 22px; border-radius: 10px; border: none; background: #e2e8f0; color: #1f2937; font-weight: 800; cursor: pointer;
+            transition: 0.3s; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08); font-size: 14px;
+        }
+        .search-bar .button-secondary:hover { background: #cbd5e1; }
+
+        .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); align-items: center; justify-content: center; padding: 20px; z-index: 1000; }
+        .modal.show { display: flex; }
+        .modal-content { width: 100%; max-width: 560px; background: white; border-radius: 18px; box-shadow: 0 20px 60px rgba(15, 23, 42, 0.2); padding: 28px; position: relative; }
+        .modal-content h2 { margin-top: 0; margin-bottom: 20px; font-size: 1.5rem; color: var(--text); }
+        .modal-close { position: absolute; top: 18px; right: 18px; border: none; background: transparent; font-size: 24px; cursor: pointer; color: #334155; }
+        .modal-form label { display: block; margin-top: 16px; font-weight: 700; color: #334155; }
+        .modal-form input, .modal-form select { width: 100%; padding: 12px 14px; margin-top: 8px; border: 1px solid #cbd5e1; border-radius: 12px; background: #f8fafc; font-size: 0.95rem; }
+        .modal-actions { margin-top: 24px; display: flex; justify-content: flex-end; gap: 12px; }
+        .modal-actions button { min-width: 110px; padding: 12px 20px; border-radius: 12px; border: none; cursor: pointer; font-weight: 800; }
+        .modal-actions .btn-primary { background: var(--primary); color: white; }
+        .modal-actions .btn-secondary { background: #f1f5f9; color: #334155; }
 
         .main-layout { display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; }
         .box { background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
@@ -203,9 +220,40 @@ try {
 
     <form class="search-bar" method="GET" action="lista_pacientes.php">
         <input type="text" name="q" value="<?= htmlspecialchars($search) ?>" placeholder="Buscar por nombre o DNI de paciente...">
+        <button type="button" id="openModal" class="button-secondary">+ Nuevo paciente</button>
         <button type="submit" translate="no" class="notranslate">BUSCAR</button>
         <?php if($search): ?><a href="lista_pacientes.php" style="padding:12px; color:var(--danger)">Limpiar</a><?php endif; ?>
     </form>
+
+    <div id="modal" class="modal" aria-hidden="true">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <button type="button" id="closeModal" class="modal-close" aria-label="Cerrar modal">×</button>
+            <h2 id="modalTitle">Registrar nuevo paciente</h2>
+            <form class="modal-form" action="registro_paciente.php" method="post">
+                <label for="modalNombre">Nombre completo</label>
+                <input id="modalNombre" name="nombre" type="text" required>
+
+                <label for="modalDni">DNI</label>
+                <input id="modalDni" name="dni" type="text" required>
+
+                <label for="modalObra">Obra social</label>
+                <select id="modalObra" name="id_obra_social">
+                    <option value="">Particular</option>
+                    <option value="1">OSDE</option>
+                    <option value="2">Swiss Medical</option>
+                    <option value="3">Galeno</option>
+                </select>
+
+                <label for="modalTelefono">Teléfono</label>
+                <input id="modalTelefono" name="telefono" type="text">
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="closeModalAlt">Cancelar</button>
+                    <button type="submit" class="btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <div class="grid-stats">
         <div class="stat-card" style="border-left-color:#3b82f6"><div class="stat-label">Total Pacientes</div><span><?=$totalPacientes?></span></div>
@@ -266,5 +314,33 @@ try {
         </div>
     <?php endif; ?>
 </div>
+<script>
+    const modal = document.getElementById('modal');
+    const openModal = document.getElementById('openModal');
+    const closeModal = document.getElementById('closeModal');
+    const closeModalAlt = document.getElementById('closeModalAlt');
+
+    const toggleModal = (show) => {
+        if (!modal) return;
+        modal.classList.toggle('show', show);
+        modal.setAttribute('aria-hidden', String(!show));
+    };
+
+    openModal?.addEventListener('click', () => toggleModal(true));
+    closeModal?.addEventListener('click', () => toggleModal(false));
+    closeModalAlt?.addEventListener('click', () => toggleModal(false));
+
+    modal?.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            toggleModal(false);
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && modal?.classList.contains('show')) {
+            toggleModal(false);
+        }
+    });
+</script>
 </body>
 </html>
