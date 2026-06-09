@@ -30,9 +30,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.27.0/swagger-ui-bundle.min.js" integrity="sha512-GXC3n6HSN1lPdp57PA5gGjDoW+6tJwB+ZmIu0zPGriFjR9Vy9U++3B3kNIdt4CL5Oo1uGgB5oD+KKYssmSZdWw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
-        // Detectamos la ruta base de forma dinámica sin depender de la extensión .php
-        const basePath = window.location.pathname.split('/').slice(0, -1).join('/');
-        const apiDocUrl = window.location.origin + basePath + '/api/openapi.json';
+        // Usamos ruta relativa para evitar problemas de basePath en diferentes entornos.
+        const apiDocUrl = './api/openapi.json';
 
         SwaggerUIBundle({
             url: apiDocUrl,

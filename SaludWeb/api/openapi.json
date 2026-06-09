@@ -5,22 +5,55 @@
     "version": "1.0.0",
     "description": "Endpoints básicos para el dashboard de SaludWEB."
   },
+  "servers": [
+    {
+      "url": "../",
+      "description": "Base path relativo del API"
+    }
+  ],
   "paths": {
     "/api/pacientes.php": {
       "get": {
-        "summary": "Lista todos los pacientes",
+        "summary": "Lista pacientes activos por defecto",
+        "parameters": [
+          {"name": "id", "in": "query", "required": false, "schema": {"type": "integer"}, "description": "ID del paciente"},
+          {"name": "all", "in": "query", "required": false, "schema": {"type": "integer", "enum": [0, 1]}, "description": "Si es 1, devuelve pacientes activos e inactivos"}
+        ],
         "responses": {
           "200": {
             "description": "Lista de pacientes",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object"
-                }
+                "schema": {"type": "object"}
               }
             }
           }
         }
+      },
+      "put": {
+        "summary": "Actualiza un paciente activo",
+        "parameters": [{"name": "id", "in": "query", "required": true, "schema": {"type": "integer"}}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nombre": {"type": "string"},
+                  "dni": {"type": "string"},
+                  "id_obra_social": {"type": "integer"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {"200": {"description": "Paciente actualizado correctamente"}}
+      },
+      "delete": {
+        "summary": "Elimina lógicamente un paciente",
+        "parameters": [{"name": "id", "in": "query", "required": true, "schema": {"type": "integer"}}],
+        "responses": {"200": {"description": "Paciente eliminado lógicamente"}}
       }
     },
     "/api/medicos.php": {

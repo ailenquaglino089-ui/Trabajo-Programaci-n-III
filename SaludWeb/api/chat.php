@@ -1,5 +1,6 @@
 <?php
 header('Content-Type: application/json; charset=UTF-8');
+require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/../db.php';
 $config = [];
 if (file_exists(__DIR__ . '/../config/openai.php')) {
@@ -7,17 +8,13 @@ if (file_exists(__DIR__ . '/../config/openai.php')) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['error' => 'Método no permitido. Usa POST.']);
-    exit;
+    respond_method_not_allowed('POST');
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
 $message = trim($input['message'] ?? '');
 if ($message === '') {
-    http_response_code(400);
-    echo json_encode(['error' => 'El mensaje es obligatorio.']);
-    exit;
+    respond_error('El mensaje es obligatorio.', 400);
 }
 
 function fallback_answer($message) {
@@ -59,7 +56,6 @@ if (!empty($apiKey) && function_exists('curl_version')) {
     curl_setopt($ch, CURLOPT_TIMEOUT, 15);
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $curlError = curl_error($ch);
     curl_close($ch);
 
     if ($response !== false && $httpCode >= 200 && $httpCode < 300) {
@@ -74,4 +70,4 @@ if ($answer === null) {
     $answer = fallback_answer($message);
 }
 
-echo json_encode(['data' => ['answer' => $answer]]);
+respond_ok(['answer' => $answer]);
