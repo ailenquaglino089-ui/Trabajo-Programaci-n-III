@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📖 Guía de Nuevas Características - SaludWEB</title>
+    <style>
+        :root { --primary: #4f46e5; --bg: #f8fafc; --text: #1e293b; --success: #10b981; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); padding: 20px; margin: 0; line-height: 1.8; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { color: var(--primary); border-bottom: 3px solid var(--primary); padding-bottom: 15px; }
+        h2 { color: #0f172a; margin-top: 30px; }
+        h3 { color: #334155; }
+        .feature { background: white; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .feature h3 { margin-top: 0; }
+        .path { background: #f8fafc; padding: 10px 15px; border-radius: 8px; font-family: monospace; color: #0f172a; border: 1px solid #cbd5e1; margin: 10px 0; }
+        .status { display: inline-block; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+        .status-new { background: #dcfce7; color: var(--success); }
+        .status-updated { background: #dbeafe; color: #0c4a6e; }
+        ul { margin: 10px 0; padding-left: 20px; }
+        li { margin: 8px 0; }
+        code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: #0f172a; font-family: monospace; }
+        .icon { font-size: 20px; margin-right: 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: var(--primary); color: white; font-weight: 700; }
+        tr:hover { background: #f8fafc; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📖 Guía de Nuevas Características - SaludWEB Pro v3.0</h1>
+    
+    <p style="color: #64748b; font-size: 16px;">Esta guía documenta todas las nuevas características agregadas a la aplicación MRx Digital. Nada del proyecto original fue eliminado.</p>
+    
+    <!-- SECCIÓN MIS RX -->
+    <h2><span class="icon">💜</span>1. Nueva Sección: Mis Rx</h2>
+    <div class="feature">
+        <h3><span class="status status-new">NUEVA</span> Centro de Control Unificado</h3>
+        <p>Acceso centralizado a todas las prestaciones relacionadas con prescripciones y servicios de salud.</p>
+        <div class="path">mis_rx.php</div>
+        <h4>Subsecciones incluidas:</h4>
+        <table>
+            <tr>
+                <th>Función</th>
+                <th>Archivo</th>
+                <th>Descripción</th>
+            </tr>
+            <tr>
+                <td><span class="icon">📄</span> Prescripciones</td>
+                <td>lista_prescripciones.php</td>
+                <td>Ver y gestionar recetas electrónicas</td>
+            </tr>
+            <tr>
+                <td><span class="icon">🔔</span> Notificaciones</td>
+                <td>notificaciones.php</td>
+                <td>Revisar avisos y recordatorios del sistema</td>
+            </tr>
+            <tr>
+                <td><span class="icon">🏥</span> Prestaciones</td>
+                <td>prestaciones.php</td>
+                <td>Consultar servicios disponibles en cobertura</td>
+            </tr>
+            <tr>
+                <td><span class="icon">🏪</span> Buscador de Farmacias</td>
+                <td>buscador_farmacias.php</td>
+                <td>Localizar farmacias cercanas y afiliadas</td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- ARCHIVO MIS_RX.PHP -->
+    <h3><span class="status status-new">NUEVA</span> mis_rx.php</h3>
+    <div class="feature">
+        <p>Centro de control con acceso rápido a:</p>
+        <ul>
+            <li>Panel de navegación intuitivo con 4 opciones principales</li>
+            <li>Sección de contacto con iconos de WhatsApp y Gmail</li>
+            <li>Información de utilidad y estado del sistema</li>
+            <li>Links de regreso a inicio</li>
+            <li>Diseño responsivo para móvil y desktop</li>
+        </ul>
+    </div>
+    
+    <!-- ARCHIVO NOTIFICACIONES.PHP -->
+    <h3><span class="status status-new">NUEVA</span> notificaciones.php</h3>
+    <div class="feature">
+        <p>Gestor de notificaciones del usuario con:</p>
+        <ul>
+            <li>Filtros por tipo: Todas, Importantes, Recordatorios, Sistema</li>
+            <li>Listado de notificaciones con timestamps</li>
+            <li>Código de colores para diferentes tipos</li>
+            <li>Soporte para notificaciones importantes, advertencias y exitosas</li>
+        </ul>
+    </div>
+    
+    <!-- ARCHIVO PRESTACIONES.PHP -->
+    <h3><span class="status status-new">NUEVA</span> prestaciones.php</h3>
+    <div class="feature">
+        <p>Catálogo de prestaciones disponibles con:</p>
+        <ul>
+            <li>Grid responsive de prestaciones</li>
+            <li>Búsqueda en tiempo real</li>
+            <li>Filtros por categoría: Médicos, Estudios, Odontología, Farmacia</li>
+            <li>Badges de estado: Activa, Limitada</li>
+            <li>Botones para ver detalles de cada prestación</li>
+        </ul>
+    </div>
+    
+    <!-- ARCHIVO BUSCADOR_FARMACIAS.PHP -->
+    <h3><span class="status status-new">NUEVA</span> buscador_farmacias.php</h3>
+    <div class="feature">
+        <p>Herramienta de búsqueda de farmacias con:</p>
+        <ul>
+            <li>Búsqueda por zona/localidad</li>
+            <li>Filtro por horario: Todas, Abiertas ahora, 24 Horas</li>
+            <li>Listado de farmacias con información completa</li>
+            <li>Distancia desde ubicación del usuario</li>
+            <li>Botones para ver en mapa y llamar</li>
+            <li>Información de cobertura de planes</li>
+        </ul>
+    </div>
+    
+    <!-- ARCHIVO PREGUNTAS_FRECUENTES.PHP -->
+    <h3><span class="status status-new">NUEVA</span> preguntas_frecuentes.php</h3>
+    <div class="feature">
+        <p>Centro de ayuda con preguntas frecuentes:</p>
+        <ul>
+            <li>Acordeón interactivo expandible/contraíble</li>
+            <li>Búsqueda en tiempo real de preguntas y respuestas</li>
+            <li>8 preguntas comunes pre-cargadas</li>
+            <li>Respuestas detalladas y claras</li>
+            <li>Accesible desde múltiples puntos de la aplicación</li>
+        </ul>
+    </div>
+    
+    <!-- ARCHIVO CUENTA.PHP -->
+    <h3><span class="status status-new">NUEVA</span> cuenta.php</h3>
+    <div class="feature">
+        <p>Página de gestión de perfil del usuario con:</p>
+        <ul>
+            <li>Perfil de usuario con avatar y datos personales</li>
+            <li>Formularios de edición de información</li>
+            <li>Gestión de seguridad: cambio de contraseña</li>
+            <li>Autenticación de dos factores (2FA)</li>
+            <li>Zona de peligro para eliminar cuenta</li>
+        </ul>
+    </div>
+    
+    <!-- SECCIÓN CONFIGURACIÓN -->
+    <h2><span class="icon">⚙️</span>2. Menú de Ajustes Completo</h2>
+    <div class="feature">
+        <h3><span class="status status-updated">ACTUALIZADO</span> configuracion.php</h3>
+        <p>Transformado de página de configuración técnica a centro de control de usuario con:</p>
+        <ul>
+            <li>🏠 Home - Enlace a dashboard principal</li>
+            <li>📄 Prescripciones - Acceso a recetas</li>
+            <li>🏥 Prestaciones - Consulta de servicios</li>
+            <li>🔔 Notificaciones - Gestión de avisos</li>
+            <li>⚙️ Ajustes - Centro de configuración (actual)</li>
+            <li>👤 Cuenta - Perfil del usuario</li>
+            <li>❓ Preguntas Frecuentes - Centro de ayuda</li>
+            <li>🔒 Cerrar Sesión - Logout del sistema</li>
+        </ul>
+        <p style="margin-top: 15px;"><strong>Secciones en Ajustes:</strong></p>
+        <ul>
+            <li>Notificaciones - Preferencias de avisos</li>
+            <li>Privacidad y Seguridad - Protección de datos</li>
+            <li>Contacto y Soporte - WhatsApp y Email</li>
+            <li>Centro de Ayuda - Documentación</li>
+            <li>Mis Datos - Descargar o eliminar datos</li>
+            <li>Información del Sistema - Detalles técnicos</li>
+        </ul>
+    </div>
+    
+    <!-- ICONOS SOCIALES -->
+    <h2><span class="icon">📱</span>3. Integración de Redes Sociales</h2>
+    <div class="feature">
+        <h3><span class="status status-new">NUEVA</span> Iconos de Contacto</h3>
+        <p>Agregados en múltiples páginas:</p>
+        <table>
+            <tr>
+                <th>Icono</th>
+                <th>Plataforma</th>
+                <th>Páginas Incluidas</th>
+                <th>Función</th>
+            </tr>
+            <tr>
+                <td>💬</td>
+                <td>WhatsApp</td>
+                <td>mis_rx.php, configuracion.php</td>
+                <td>Link wa.me para contacto directo</td>
+            </tr>
+            <tr>
+                <td>✉️</td>
+                <td>Gmail</td>
+                <td>mis_rx.php, configuracion.php</td>
+                <td>Link mailto: para correo</td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- MENÚ PRINCIPAL -->
+    <h2><span class="icon">🏠</span>4. Actualización del Menú Principal</h2>
+    <div class="feature">
+        <h3><span class="status status-updated">ACTUALIZADO</span> lista_pacientes.php</h3>
+        <p>Se agregó la nueva opción al grid de menú:</p>
+        <ul>
+            <li><strong>Posición:</strong> 2do elemento (después de "Registrar Nuevo Paciente")</li>
+            <li><strong>Etiqueta:</strong> "Mis Rx"</li>
+            <li><strong>Icono:</strong> 💜</li>
+            <li><strong>Color:</strong> #a855f7 (púrpura)</li>
+            <li><strong>Enlace:</strong> mis_rx.php</li>
+            <li><strong>Estado:</strong> Completamente funcional y navegable</li>
+        </ul>
+        <p style="margin-top: 15px;"><strong>Total de opciones en el menú:</strong> 11 (antes eran 10)</p>
+    </div>
+    
+    <!-- TABLA RESUMEN -->
+    <h2>📊 Resumen de Cambios</h2>
+    <table>
+        <tr>
+            <th>Archivo</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>Descripción</th>
+        </tr>
+        <tr>
+            <td>mis_rx.php</td>
+            <td>Nuevo</td>
+            <td><span class="status status-new">CREADO</span></td>
+            <td>Centro de control de Mis Rx</td>
+        </tr>
+        <tr>
+            <td>notificaciones.php</td>
+            <td>Nuevo</td>
+            <td><span class="status status-new">CREADO</span></td>
+            <td>Gestor de notificaciones</td>
+        </tr>
+        <tr>
+            <td>prestaciones.php</td>
+            <td>Nuevo</td>
+            <td><span class="status status-new">CREADO</span></td>
+            <td>Catálogo de prestaciones</td>
+        </tr>
+        <tr>
+            <td>buscador_farmacias.php</td>
+            <td>Nuevo</td>
+            <td><span class="status status-new">CREADO</span></td>
+            <td>Búsqueda de farmacias</td>
+        </tr>
+        <tr>
+            <td>preguntas_frecuentes.php</td>
+            <td>Nuevo</td>
+            <td><span class="status status-new">CREADO</span></td>
+            <td>Centro de ayuda con FAQ</td>
+        </tr>
+        <tr>
+            <td>cuenta.php</td>
+            <td>Nuevo</td>
+            <td><span class="status status-new">CREADO</span></td>
+            <td>Perfil de usuario</td>
+        </tr>
+        <tr>
+            <td>configuracion.php</td>
+            <td>Existente</td>
+            <td><span class="status status-updated">ACTUALIZADO</span></td>
+            <td>Menú de ajustes completo</td>
+        </tr>
+        <tr>
+            <td>lista_pacientes.php</td>
+            <td>Existente</td>
+            <td><span class="status status-updated">ACTUALIZADO</span></td>
+            <td>Agregada opción "Mis Rx"</td>
+        </tr>
+    </table>
+    
+    <!-- NAVEGACIÓN -->
+    <h2>🗺️ Mapa de Navegación</h2>
+    <div class="feature">
+        <p><strong>Punto de entrada:</strong> lista_pacientes.php (Dashboard principal)</p>
+        <p><strong>Desde el menú principal, acceso a:</strong></p>
+        <ul>
+            <li>Mis Rx → Prescripciones, Notificaciones, Prestaciones, Buscador de Farmacias</li>
+            <li>Configuración → Ajustes, Cuenta, FAQ, etc.</li>
+            <li>Todos los elementos son navegables entre sí</li>
+            <li>Botones "Volver" en todas las nuevas páginas</li>
+        </ul>
+    </div>
+    
+    <!-- COMPATIBILIDAD -->
+    <h2>✅ Compatibilidad</h2>
+    <div class="feature">
+        <ul>
+            <li><strong>✓</strong> Nada del proyecto original fue eliminado</li>
+            <li><strong>✓</strong> Todas las páginas existentes siguen funcionales</li>
+            <li><strong>✓</strong> Diseño responsivo en móvil y desktop</li>
+            <li><strong>✓</strong> Estilos CSS consistentes con la plataforma</li>
+            <li><strong>✓</strong> Navegación intuitiva y clara</li>
+            <li><strong>✓</strong> Iconos emoji para mejor UX</li>
+        </ul>
+    </div>
+    
+    <!-- SOPORTE -->
+    <h2>📞 Soporte</h2>
+    <p>Para consultas o asistencia:</p>
+    <ul>
+        <li><strong>WhatsApp:</strong> +54 9 11 1234-5678</li>
+        <li><strong>Email:</strong> soporte@saludweb.com</li>
+        <li><strong>Horario:</strong> Lun-Vie 8:00-20:00 hs</li>
+    </ul>
+    
+    <hr style="margin: 40px 0; border: 1px solid #e2e8f0;">
+    <p style="text-align: center; color: #64748b; font-size: 14px;">
+        <strong>SaludWEB Pro v3.0</strong> - Última actualización: 16 de junio de 2026<br>
+        © 2024-2026 SaludWEB. Todos los derechos reservados.
+    </p>
+</div>
+</body>
+</html>

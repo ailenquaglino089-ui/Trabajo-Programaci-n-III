@@ -201,6 +201,7 @@ try {
         <?php 
         $menu = [
             ['l' => 'Registrar Nuevo paciente', 'u' => 'registro_paciente.php', 'c' => '#4f46e5', 'i' => '👤'],
+            ['l' => 'Mis Rx', 'u' => 'mis_rx.php', 'c' => '#a855f7', 'i' => '💜'],
             ['l' => 'MRx Digital', 'u' => 'emitir_prescripcion.php', 'c' => '#10b981', 'i' => '💊'],
             ['l' => 'Ver Recetas', 'u' => 'lista_prescripciones.php', 'c' => '#3b82f6', 'i' => '📄'],
             ['l' => 'Módulos Farmacia', 'u' => 'farmacia.php', 'c' => '#f59e0b', 'i' => '🏥'],
