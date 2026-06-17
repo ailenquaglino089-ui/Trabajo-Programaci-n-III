@@ -89,6 +89,11 @@
                 <p>Ver la documentación generada automáticamente para los endpoints de la API.</p>
                 <a href="api_docs.php">Abrir Docs</a>
             </div>
+            <div class="card">
+                <h2>📥 Descargas de informes e imágenes</h2>
+                <p>Instrucciones para descargar informes e imágenes desde los portales externos.</p>
+                <a href="info_descargas.php">Ver instrucciones</a>
+            </div>
         </div>
     </div>
 </body>

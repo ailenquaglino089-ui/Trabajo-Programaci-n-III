@@ -209,6 +209,7 @@ try {
             ['l' => 'Escritorio', 'u' => 'escritorio.php', 'c' => '#06b6d4', 'i' => '🖥️'],
             ['l' => 'API Docs', 'u' => 'api_docs.php', 'c' => '#64748b', 'i' => '📚'],
             ['l' => 'Ver Papelera', 'u' => 'papelera.php', 'c' => '#ef4444', 'i' => '🗑️'],
+            ['l' => 'Descargas: Informes/Imágenes', 'u' => 'info_descargas.php', 'c' => '#0ea5a4', 'i' => '📥'],
         ];
         foreach($menu as $m): ?>
             <a href="<?= $m['u'] ?>" class="menu-item" style="border-bottom: 5px solid <?= $m['c'] ?>; color: <?= $m['c'] ?>;" onmouseover="this.style.background='<?= $m['c'] ?>'" onmouseout="this.style.background='white'">
